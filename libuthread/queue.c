@@ -5,16 +5,39 @@
 #include "queue.h"
 
 struct queue {
-	unsigned front, end, size, capacity;
+	unsigned front, back, size, capacity;
 	int* array;
 };
+
+int is_full(queue_t queue)
+{
+	return queue->size == queue->capacity;
+}
+
+void resize_queue(queue_t queue)
+{
+	int new_capacity = queue->capacity * 2;
+	int* new_array = (int*) malloc(new_capacity * sizeof(int));
+
+	for (unsigned i = queue->front; i < queue->back; i++) {
+		new_array[i - queue->front] = queue->array[i];
+	}
+
+	free(queue->array);
+
+	queue->array = new_array;
+	queue->size = new_capacity / 2;
+	queue->capacity = new_capacity;
+	queue->front = 0;
+	queue->back = new_capacity / 2 - 1;
+}
 
 queue_t queue_create(void)
 {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
 
 	queue->array = (int*) malloc(queue->capacity * sizeof(int));
-	queue->front = queue->end = 0;
+	queue->front = queue->back = 0;
 	queue->capacity = queue->size = 1;
 
 	return queue;
