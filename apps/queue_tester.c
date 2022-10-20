@@ -46,11 +46,20 @@ void test_invalid_inputs_queue_destroy()
 	TEST_ASSERT(queue_destroy(NULL) == -1);
 }
 
+void test_valid_inputs_queue_destroy()
+{
+	fprintf(stderr, "*** TEST test_invalid_inputs_queue_destroy ***\n");
+
+	queue_t q = queue_create();
+	TEST_ASSERT(queue_destroy(q) == 0);
+}
+
 int main(void)
 {
 	test_create_queue();
 	test_simple_enqueue_dequeue();
 	test_invalid_inputs_queue_destroy();
+	test_valid_inputs_queue_destroy()
 
 	return 0;
 }
