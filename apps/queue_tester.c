@@ -115,6 +115,28 @@ void test_simple_queue_length()
 	TEST_ASSERT(queue_length(q) == 50);
 }
 
+void test_empty_queue_length()
+{
+	fprintf(stderr, "\n*** test_empty_queue_length ***\n");
+
+	int data, *ptr;
+	queue_t q = queue_create();
+	TEST_ASSERT(queue_length(q) == 0);
+
+	queue_enqueue(q, &data);
+	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_length(q) == 2);
+
+	queue_dequeue(q, (void**)&ptr);
+	TEST_ASSERT(queue_length(q) == 1);
+
+	queue_dequeue(q, (void**)&ptr);
+	TEST_ASSERT(queue_length(q) == 0);
+
+	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_length(q) == 1);
+}
+
 int main(void)
 {
 	test_create_queue();
@@ -128,6 +150,7 @@ int main(void)
 	test_invalid_null_data_input_queue_dequeue();
 	test_invalid_null_input_queue_length();
 	test_simple_queue_length();
+	test_empty_queue_length();
 
 
 	return 0;
