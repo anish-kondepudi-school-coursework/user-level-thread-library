@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <queue.h>
+#include "../libuthread/queue.h"
 
 #define TEST_ASSERT(assert)				\
 do {									\
@@ -16,7 +16,7 @@ do {									\
 } while(0)
 
 /* Create */
-void test_create(void)
+void test_create_queue(void)
 {
 	fprintf(stderr, "*** TEST create ***\n");
 
@@ -24,7 +24,7 @@ void test_create(void)
 }
 
 /* Enqueue/Dequeue simple */
-void test_queue_simple(void)
+void test_simple_enqueue_dequeue(void)
 {
 	int data = 3, *ptr;
 	queue_t q;
@@ -39,8 +39,8 @@ void test_queue_simple(void)
 
 int main(void)
 {
-	test_create();
-	test_queue_simple();
+	test_create_queue();
+	test_simple_enqueue_dequeue();
 
 	return 0;
 }
