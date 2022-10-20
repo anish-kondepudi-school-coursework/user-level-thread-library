@@ -15,6 +15,11 @@ int is_full(queue_t queue)
 	return queue->size == queue->capacity;
 }
 
+int is_empty(queue_t queue)
+{
+	return queue->size == 0;
+}
+
 int resize_queue(queue_t queue)
 {
 	int new_capacity = queue->capacity * 2;
@@ -89,7 +94,19 @@ int queue_enqueue(queue_t queue, void *data)
 
 int queue_dequeue(queue_t queue, void **data)
 {
-	/* TODO Phase 1 */
+	if (queue == NULL | data == NULL || is_empty(queue)) {
+		return -1;
+	}
+
+	int item = queue->array[queue->front];
+	if (queue->front != queue->back) {
+		queue->front = (queue->front + 1) % queue->capacity;
+	}
+	queue->size--;
+
+	*(int*)(*data) = item;
+
+	return 0;
 }
 
 int queue_delete(queue_t queue, void *data)
