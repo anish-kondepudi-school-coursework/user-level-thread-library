@@ -65,7 +65,7 @@ queue_t queue_create(void)
 
 int queue_destroy(queue_t queue)
 {
-	if (queue == NULL || is_full(queue)) {
+	if (queue == NULL || !is_empty(queue)) {
 		return -1;
 	}
 

@@ -35,6 +35,7 @@ void test_simple_enqueue_dequeue(void)
 	TEST_ASSERT(ptr == &data);
 }
 
+/* NULL queue destroy */
 void test_invalid_null_input_queue_destroy()
 {
 	fprintf(stderr, "*** TEST test_invalid_null_input_queue_destroy ***\n");
@@ -42,12 +43,14 @@ void test_invalid_null_input_queue_destroy()
 	TEST_ASSERT(queue_destroy(NULL) == -1);
 }
 
+/* not empty queue destroy */
 void test_invalid_full_queue_input_queue_destroy()
 {
 	fprintf(stderr, "*** TEST test_invalid_full_queue_input_queue_destroy ***\n");
 
 	int data = 3;
 	queue_t q = queue_create();
+	queue_enqueue(q, &data);
 	queue_enqueue(q, &data);
 	TEST_ASSERT(queue_destroy(q) == -1);
 }
