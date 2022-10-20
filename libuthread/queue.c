@@ -9,7 +9,7 @@ struct queue {
 	int* array;
 };
 
-int is_full(queue_t queue)
+int is_(queue_t queue)
 {
 	return queue->size == queue->capacity;
 }
@@ -35,8 +35,13 @@ void resize_queue(queue_t queue)
 queue_t queue_create(void)
 {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
+	int* array =  (int*) malloc(queue->capacity * sizeof(int));
 
-	queue->array = (int*) malloc(queue->capacity * sizeof(int));
+	if (queue == NULL || array == NULL) {
+		return NULL;
+	}
+
+	queue->array = array;
 	queue->front = queue->back = 0;
 	queue->capacity = queue->size = 1;
 
@@ -45,7 +50,14 @@ queue_t queue_create(void)
 
 int queue_destroy(queue_t queue)
 {
-	/* TODO Phase 1 */
+	if (queue == NULL || is_full(queue)) {
+		return -1;
+	}
+
+	free(queue->array);
+	free(queue);
+
+	return 0;
 }
 
 int queue_enqueue(queue_t queue, void *data)
