@@ -14,10 +14,14 @@ int is_(queue_t queue)
 	return queue->size == queue->capacity;
 }
 
-void resize_queue(queue_t queue)
+int resize_queue(queue_t queue)
 {
 	int new_capacity = queue->capacity * 2;
 	int* new_array = (int*) malloc(new_capacity * sizeof(int));
+
+	if (new_array == NULL) {
+		return -1;
+	}
 
 	for (unsigned i = queue->front; i < queue->back; i++) {
 		new_array[i - queue->front] = queue->array[i];
@@ -30,6 +34,8 @@ void resize_queue(queue_t queue)
 	queue->capacity = new_capacity;
 	queue->front = 0;
 	queue->back = new_capacity / 2 - 1;
+
+	return 0;
 }
 
 queue_t queue_create(void)
@@ -62,7 +68,19 @@ int queue_destroy(queue_t queue)
 
 int queue_enqueue(queue_t queue, void *data)
 {
-	/* TODO Phase 1 */
+	if (queue == NULL || data == NULL) {
+		return -1;
+	}
+
+	if (is_full(queue) && resize_queue(queue) == -1) {
+		return -1;
+	}
+
+	queue->back++;
+	queue->size++;
+	queue->array[queue->back] = *(int*)data;
+
+	return 0;
 }
 
 int queue_dequeue(queue_t queue, void **data)
