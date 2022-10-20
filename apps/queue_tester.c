@@ -39,27 +39,56 @@ void test_simple_enqueue_dequeue(void)
 // check edge cases with lot of arguments when queue completely full
 // check if free queue works
 
-void test_invalid_inputs_queue_destroy()
+void test_invalid_null_input_queue_destroy()
 {
-	fprintf(stderr, "*** TEST test_invalid_inputs_queue_destroy ***\n");
+	fprintf(stderr, "*** TEST test_invalid_null_input_queue_destroy ***\n");
 
 	TEST_ASSERT(queue_destroy(NULL) == -1);
 }
 
+void test_invalid_full_queue_input_queue_destroy()
+{
+	fprintf(stderr, "*** TEST test_invalid_full_queue_input_queue_destroy ***\n");
+
+	int data = 3;
+	queue_t q = queue_create();
+	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_destroy(q) == -1);
+}
+
 void test_valid_inputs_queue_destroy()
 {
-	fprintf(stderr, "*** TEST test_invalid_inputs_queue_destroy ***\n");
+	fprintf(stderr, "*** TEST test_valid_inputs_queue_destroy ***\n");
 
 	queue_t q = queue_create();
 	TEST_ASSERT(queue_destroy(q) == 0);
+}
+
+void test_invalid_null_queue_input_queue_enqueue()
+{
+	fprintf(stderr, "*** TEST test_invalid_null_queue_input_queue_enqueue ***\n");
+
+	int data = 3;
+	TEST_ASSERT(queue_enqueue(NULL, &data) == -1);
+}
+
+void test_invalid_null_data_input_queue_enqueue()
+{
+	fprintf(stderr, "*** TEST test_invalid_null_data_input_queue_enqueue ***\n");
+
+	queue_t q = queue_create();
+	TEST_ASSERT(queue_enqueue(q, NULL) == -1);
 }
 
 int main(void)
 {
 	test_create_queue();
 	test_simple_enqueue_dequeue();
-	test_invalid_inputs_queue_destroy();
-	test_valid_inputs_queue_destroy()
+	test_invalid_null_input_queue_destroy();
+	test_invalid_full_queue_input_queue_destroy();
+	test_valid_inputs_queue_destroy();
+	test_invalid_null_queue_input_queue_enqueue();
+	test_invalid_null_data_input_queue_enqueue();
 
 	return 0;
 }
