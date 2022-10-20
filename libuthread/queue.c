@@ -7,7 +7,7 @@
 
 struct queue {
 	unsigned front, back, size, capacity;
-	int* array;
+	void** array;
 };
 
 int is_full(queue_t queue)
@@ -23,7 +23,7 @@ int is_empty(queue_t queue)
 int resize_queue(queue_t queue)
 {
 	int new_capacity = queue->capacity * 2;
-	int* new_array = (int*) calloc(new_capacity, sizeof(int));
+	void** new_array = (void**) malloc(new_capacity * sizeof(void*));
 
 	if (new_array == NULL) {
 		return -1;
@@ -50,7 +50,7 @@ int resize_queue(queue_t queue)
 queue_t queue_create(void)
 {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
-	int* array =  (int*) calloc(queue->capacity, sizeof(int));
+	void** array =  (void**) malloc(queue->capacity * sizeof(void*));
 
 	if (queue == NULL || array == NULL) {
 		return NULL;
@@ -87,7 +87,7 @@ int queue_enqueue(queue_t queue, void *data)
 
 	queue->back = (queue->back + 1) % queue->capacity;
 	queue->size++;
-	queue->array[queue->back] = *(int*)data;
+	queue->array[queue->back] = data;
 
 	return 0;
 }
@@ -98,13 +98,13 @@ int queue_dequeue(queue_t queue, void **data)
 		return -1;
 	}
 
-	int item = queue->array[queue->front];
+	void* item = queue->array[queue->front];
+	*data = item;
+
+	queue->size--;
 	if (queue->front != queue->back) {
 		queue->front = (queue->front + 1) % queue->capacity;
 	}
-	queue->size--;
-
-	*(int*)(*data) = item;
 
 	return 0;
 }
