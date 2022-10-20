@@ -35,10 +35,6 @@ void test_simple_enqueue_dequeue(void)
 	TEST_ASSERT(ptr == &data);
 }
 
-// check invalid arguments
-// check edge cases with lot of arguments when queue completely full
-// check if free queue works
-
 void test_invalid_null_input_queue_destroy()
 {
 	fprintf(stderr, "*** TEST test_invalid_null_input_queue_destroy ***\n");
