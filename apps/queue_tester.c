@@ -4,27 +4,27 @@
 
 #include "../libuthread/queue.h"
 
-#define TEST_ASSERT(assert)				\
-do {									\
-	printf("ASSERT: " #assert " ... ");	\
-	if (assert) {						\
-		printf("PASS\n");				\
-	} else	{							\
-		printf("FAIL\n");				\
-		exit(1);						\
-	}									\
-} while(0)
+#define TEST_ASSERT(assert)					\
+do {										\
+	if (assert) {							\
+		printf("PASS");						\
+	} else	{								\
+		printf("FAIL");						\
+		exit(1);							\
+	}										\
+	printf("\tASSERT: " #assert "\n");		\
+} while(0)									\
 
 void test_create_queue(void)
 {
-	fprintf(stderr, "*** TEST queue_create ***\n");
+	fprintf(stderr, "\n*** TEST queue_create ***\n");
 
 	TEST_ASSERT(queue_create() != NULL);
 }
 
 void test_simple_enqueue_dequeue(void)
 {
-	fprintf(stderr, "*** TEST test_simple_enqueue_dequeue ***\n");
+	fprintf(stderr, "\n*** TEST test_simple_enqueue_dequeue ***\n");
 
 	int data = 3, *ptr;
 	queue_t q = queue_create();
@@ -35,14 +35,14 @@ void test_simple_enqueue_dequeue(void)
 
 void test_invalid_null_input_queue_destroy()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_input_queue_destroy ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_input_queue_destroy ***\n");
 
 	TEST_ASSERT(queue_destroy(NULL) == -1);
 }
 
 void test_invalid_full_queue_input_queue_destroy()
 {
-	fprintf(stderr, "*** TEST test_invalid_full_queue_input_queue_destroy ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_full_queue_input_queue_destroy ***\n");
 
 	int data = 3;
 	queue_t q = queue_create();
@@ -53,7 +53,7 @@ void test_invalid_full_queue_input_queue_destroy()
 
 void test_valid_inputs_queue_destroy()
 {
-	fprintf(stderr, "*** TEST test_valid_inputs_queue_destroy ***\n");
+	fprintf(stderr, "\n*** TEST test_valid_inputs_queue_destroy ***\n");
 
 	queue_t q = queue_create();
 	TEST_ASSERT(queue_destroy(q) == 0);
@@ -61,7 +61,7 @@ void test_valid_inputs_queue_destroy()
 
 void test_invalid_null_queue_input_queue_enqueue()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_queue_input_queue_enqueue ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_queue_input_queue_enqueue ***\n");
 
 	int data = 3;
 	TEST_ASSERT(queue_enqueue(NULL, &data) == -1);
@@ -69,7 +69,7 @@ void test_invalid_null_queue_input_queue_enqueue()
 
 void test_invalid_null_data_input_queue_enqueue()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_data_input_queue_enqueue ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_data_input_queue_enqueue ***\n");
 
 	queue_t q = queue_create();
 	TEST_ASSERT(queue_enqueue(q, NULL) == -1);
@@ -77,7 +77,7 @@ void test_invalid_null_data_input_queue_enqueue()
 
 void test_invalid_null_queue_input_queue_dequeue()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_queue_input_queue_dequeue ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_queue_input_queue_dequeue ***\n");
 
 	int* data;
 	TEST_ASSERT(queue_dequeue(NULL, (void**)&data) == -1);
@@ -85,7 +85,7 @@ void test_invalid_null_queue_input_queue_dequeue()
 
 void test_invalid_null_data_input_queue_dequeue()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_data_input_queue_dequeue ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_data_input_queue_dequeue ***\n");
 
 	queue_t q = queue_create();
 	TEST_ASSERT(queue_dequeue(q, NULL) == -1);
@@ -93,13 +93,13 @@ void test_invalid_null_data_input_queue_dequeue()
 
 void test_invalid_null_input_queue_length()
 {
-	fprintf(stderr, "*** TEST test_invalid_null_input_queue_length ***\n");
+	fprintf(stderr, "\n*** TEST test_invalid_null_input_queue_length ***\n");
 	TEST_ASSERT(queue_length(NULL) == -1);
 }
 
 void test_simple_queue_length()
 {
-	fprintf(stderr, "*** TEST test_simple_queue_length ***\n");
+	fprintf(stderr, "\n*** TEST test_simple_queue_length ***\n");
 
 	int data = 3;
 	queue_t q = queue_create();
