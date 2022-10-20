@@ -94,7 +94,7 @@ int queue_enqueue(queue_t queue, void *data)
 
 int queue_dequeue(queue_t queue, void **data)
 {
-	if (queue == NULL | data == NULL || is_empty(queue)) {
+	if (queue == NULL || data == NULL || is_empty(queue)) {
 		return -1;
 	}
 
