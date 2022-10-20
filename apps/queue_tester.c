@@ -15,7 +15,6 @@ do {									\
 	}									\
 } while(0)
 
-/* Create */
 void test_create_queue(void)
 {
 	fprintf(stderr, "*** TEST queue_create ***\n");
@@ -23,7 +22,6 @@ void test_create_queue(void)
 	TEST_ASSERT(queue_create() != NULL);
 }
 
-/* Enqueue/Dequeue simple */
 void test_simple_enqueue_dequeue(void)
 {
 	fprintf(stderr, "*** TEST test_simple_enqueue_dequeue ***\n");
@@ -35,7 +33,6 @@ void test_simple_enqueue_dequeue(void)
 	TEST_ASSERT(ptr == &data);
 }
 
-/* NULL queue destroy */
 void test_invalid_null_input_queue_destroy()
 {
 	fprintf(stderr, "*** TEST test_invalid_null_input_queue_destroy ***\n");
@@ -43,7 +40,6 @@ void test_invalid_null_input_queue_destroy()
 	TEST_ASSERT(queue_destroy(NULL) == -1);
 }
 
-/* not empty queue destroy */
 void test_invalid_full_queue_input_queue_destroy()
 {
 	fprintf(stderr, "*** TEST test_invalid_full_queue_input_queue_destroy ***\n");
