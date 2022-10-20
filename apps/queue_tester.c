@@ -148,20 +148,30 @@ void test_empty_queue_length()
 
 int main(void)
 {
+	// Queue Create
 	test_create_queue();
-	test_simple_enqueue_dequeue();
+
+	// Queue Destroy
 	test_invalid_null_input_queue_destroy();
 	test_invalid_full_queue_input_queue_destroy();
 	test_valid_inputs_queue_destroy();
+
+	// Queue Enqueue
 	test_invalid_null_queue_input_queue_enqueue();
 	test_invalid_null_data_input_queue_enqueue();
 	test_invalid_null_queue_input_queue_dequeue();
+
+	// Queue Dequeue
 	test_invalid_null_data_input_queue_dequeue();
 	test_empty_queue_dequeue();
+
+	// Queue Length
 	test_invalid_null_input_queue_length();
 	test_simple_queue_length();
 	test_empty_queue_length();
 
+	// General Tests
+	test_simple_enqueue_dequeue();
 
 	return 0;
 }
