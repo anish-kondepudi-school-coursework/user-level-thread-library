@@ -91,6 +91,15 @@ void test_invalid_null_data_input_queue_dequeue()
 	TEST_ASSERT(queue_dequeue(q, NULL) == -1);
 }
 
+void test_empty_queue_dequeue()
+{
+	fprintf(stderr, "\n*** TEST test_empty_queue_dequeue ***\n");
+
+	int *data;
+	queue_t q = queue_create();
+	TEST_ASSERT(queue_dequeue(q, (void**)&data) == -1);
+}
+
 void test_invalid_null_input_queue_length()
 {
 	fprintf(stderr, "\n*** TEST test_invalid_null_input_queue_length ***\n");
@@ -148,6 +157,7 @@ int main(void)
 	test_invalid_null_data_input_queue_enqueue();
 	test_invalid_null_queue_input_queue_dequeue();
 	test_invalid_null_data_input_queue_dequeue();
+	test_empty_queue_dequeue();
 	test_invalid_null_input_queue_length();
 	test_simple_queue_length();
 	test_empty_queue_length();
