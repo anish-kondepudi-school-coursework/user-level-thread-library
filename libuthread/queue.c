@@ -3,13 +3,14 @@
 #include <string.h>
 
 #include "queue.h"
+#include <stdio.h>
 
 struct queue {
 	unsigned front, back, size, capacity;
 	int* array;
 };
 
-int is_(queue_t queue)
+int is_full(queue_t queue)
 {
 	return queue->size == queue->capacity;
 }
@@ -17,15 +18,18 @@ int is_(queue_t queue)
 int resize_queue(queue_t queue)
 {
 	int new_capacity = queue->capacity * 2;
-	int* new_array = (int*) malloc(new_capacity * sizeof(int));
+	int* new_array = (int*) calloc(new_capacity, sizeof(int));
 
 	if (new_array == NULL) {
 		return -1;
 	}
 
-	for (unsigned i = queue->front; i < queue->back; i++) {
-		new_array[i - queue->front] = queue->array[i];
-	}
+	unsigned new_queue_idx = 0;
+	unsigned old_queue_idx = queue->front;
+	do {
+		new_array[new_queue_idx++] = queue->array[old_queue_idx];
+		old_queue_idx = (old_queue_idx + 1) % queue->capacity;
+	} while (old_queue_idx != (queue->back + 1) % queue->capacity);
 
 	free(queue->array);
 
@@ -41,15 +45,15 @@ int resize_queue(queue_t queue)
 queue_t queue_create(void)
 {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
-	int* array =  (int*) malloc(queue->capacity * sizeof(int));
+	int* array =  (int*) calloc(queue->capacity, sizeof(int));
 
 	if (queue == NULL || array == NULL) {
 		return NULL;
 	}
 
 	queue->array = array;
-	queue->front = queue->back = 0;
-	queue->capacity = queue->size = 1;
+	queue->front = queue->back = queue->size = 0;
+	queue->capacity = 1;
 
 	return queue;
 }
@@ -76,7 +80,7 @@ int queue_enqueue(queue_t queue, void *data)
 		return -1;
 	}
 
-	queue->back++;
+	queue->back = (queue->back + 1) % queue->capacity;
 	queue->size++;
 	queue->array[queue->back] = *(int*)data;
 
