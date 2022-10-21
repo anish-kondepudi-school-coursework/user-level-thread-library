@@ -128,6 +128,19 @@ void test_empty_queue_input_queue_delete()
 	TEST_ASSERT(queue_length(q) == 0);
 }
 
+void test_single_item_queue_delete()
+{
+	fprintf(stderr, "\n*** TEST test_single_item_queue_delete ***\n");
+
+	queue_t q = queue_create();
+	int data = 3;
+
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
+	TEST_ASSERT(queue_delete(q, &data) == 0);
+	TEST_ASSERT(queue_delete(q, &data) == -1);
+	TEST_ASSERT(queue_length(q) == 0);
+}
+
 void test_delete_non_existent_item_even_length_queue_delete()
 {
 	fprintf(stderr, "\n*** TEST test_delete_non_existent_item_even_length_queue_delete ***\n");
@@ -433,6 +446,7 @@ int main(void)
 	test_invalid_null_queue_input_queue_delete();
 	test_invalid_null_data_input_queue_delete();
 	test_empty_queue_input_queue_delete();
+	test_single_item_queue_delete();
 	test_delete_non_existent_item_odd_length_queue_delete();
 	test_delete_non_existent_item_even_length_queue_delete();
 	test_first_last_item_odd_length_queue_delete();
