@@ -1,6 +1,17 @@
 #ifndef _QUEUE_H
 #define _QUEUE_H
 
+
+/*
+ * node_t - Node type
+ *
+ * A node is a struct that we can chain together similar to a linked list.
+ * The chain of these nodes can be used in the implementation of a queue.
+ * A node must hold the specific data as well as a pointer to the next node
+ * in the chain.
+*/
+typedef struct node* node_t;
+
 /*
  * queue_t - Queue type
  *
@@ -10,7 +21,6 @@
  *
  * Apart from delete and iterate operations, all operations should be O(1).
  */
-typedef struct node* node_t;
 typedef struct queue* queue_t;
 
 /*
