@@ -136,7 +136,7 @@ int queue_delete(queue_t queue, void *data)
 int queue_iterate(queue_t queue, queue_func_t func)
 {
 	unsigned processed_idx = 0;
-	node_t processed[queue->length];
+	node_t processed[queue->length * 5]; // Making assumption that queue_func_t wont insert more than 4x current size of queue items
 	node_t curr_node = queue->front;
 
 	while (curr_node != NULL) {
