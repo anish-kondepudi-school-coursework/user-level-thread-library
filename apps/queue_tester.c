@@ -183,6 +183,28 @@ void test_first_last_item_when_not_max_capacity_queue_delete()
 	}
 }
 
+void test_first_last_item_when_max_capacity_queue_delete()
+{
+	fprintf(stderr, "\n*** TEST test_first_last_item_when_not_max_capacity_queue_delete ***\n");
+
+	queue_t q = queue_create();
+
+	int data[] = { 1, 2, 3, 4 };
+	for (int i = 0; i < 4; i++) {
+		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
+	}
+
+	TEST_ASSERT(queue_delete(q, &data[0]) == 0);
+	TEST_ASSERT(queue_length(q) == 3);
+
+	int *ptr;
+	int dequeue_data[] = { 2, 3, 4 };
+	for (int i = 0; i < 3; i++) {
+		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+		TEST_ASSERT(*ptr == dequeue_data[i]);
+	}
+}
+
 void test_delete_middle_item_when_not_max_capacity_queue_delete()
 {
 	fprintf(stderr, "\n*** TEST test_delete_middle_item_when_not_max_capacity_queue_delete ***\n");
@@ -312,6 +334,7 @@ int main(void)
 	test_delete_non_existent_item_when_not_max_capacity_queue_delete();
 	test_delete_non_existent_item_when_max_capacity_queue_delete();
 	test_first_last_item_when_not_max_capacity_queue_delete();
+	test_first_last_item_when_max_capacity_queue_delete();
 	test_delete_middle_item_when_not_max_capacity_queue_delete();
 	test_delete_last_item_when_not_max_capacity_queue_delete();
 
