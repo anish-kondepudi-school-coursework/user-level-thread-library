@@ -27,13 +27,14 @@ node_t create_new_node(void* data) {
 
 queue_t queue_create(void)
 {
-	// if (queue == NULL || array == NULL) {
-	// 	return NULL;
-	// }
+	queue_t queue = (queue_t) malloc(sizeof(struct queue));
 
+	if (queue == NULL) {
+		return NULL;
+	}
 
-
-	return NULL;
+	queue->front = queue->back = NULL;
+	return queue;
 }
 
 int queue_destroy(queue_t queue)
