@@ -72,12 +72,17 @@ int queue_enqueue(queue_t queue, void *data)
 
 int queue_dequeue(queue_t queue, void **data)
 {
-	if (queue == NULL || data == NULL || is_empty(queue)) {
+	if (queue == NULL || data == NULL || queue->front == NULL) {
 		return -1;
 	}
 
+	node_t node = queue->front;
+	queue->front = queue->front->next;
+	if (queue->front == NULL) {
+		queue->back == NULL;
+	}
 
-
+	free(node);
 	return 0;
 }
 
