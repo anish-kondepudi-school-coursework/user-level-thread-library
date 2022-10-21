@@ -13,6 +13,18 @@ struct queue {
 	node_t front, back;
 };
 
+node_t create_new_node(void* data) {
+	node_t node = (node_t) malloc(sizeof(struct node));
+
+	if (node == NULL) {
+		return NULL;
+	}
+
+	node->data = data;
+	node->next = NULL;
+	return node;
+}
+
 queue_t queue_create(void)
 {
 	// if (queue == NULL || array == NULL) {
