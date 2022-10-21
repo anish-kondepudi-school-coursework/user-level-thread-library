@@ -293,6 +293,35 @@ void test_delete_last_item_when_max_capacity_queue_delete()
 	}
 }
 
+void test_delete_item_when_queue_circular_and_full_capacity_queue_delete()
+{
+	fprintf(stderr, "\n*** TEST test_delete_item_when_queue_circular_and_full_capacity_queue_delete ***\n");
+
+	queue_t q = queue_create();
+
+	int dummy_data = 99;
+	TEST_ASSERT(queue_enqueue(q, (void*)&dummy_data) == 0);
+	TEST_ASSERT(queue_enqueue(q, (void*)&dummy_data) == 0);
+
+	int *ptr;
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+
+	int data[] = { 1, 2, 3, 4 };
+	for (int i = 0; i < 4; i++) {
+		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
+	}
+
+	TEST_ASSERT(queue_delete(q, &data[2]) == 0);
+	TEST_ASSERT(queue_length(q) == 3);
+
+	int dequeue_data[] = { 1, 2, 4 };
+	for (int i = 0; i < 3; i++) {
+		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+		TEST_ASSERT(*ptr == dequeue_data[i]);
+	}
+}
+
 void test_empty_queue_dequeue()
 {
 	fprintf(stderr, "\n*** TEST test_empty_queue_dequeue ***\n");
@@ -383,6 +412,7 @@ int main(void)
 	test_delete_middle_item_when_max_capacity_queue_delete();
 	test_delete_last_item_when_not_max_capacity_queue_delete();
 	test_delete_last_item_when_max_capacity_queue_delete();
+	test_delete_item_when_queue_circular_and_full_capacity_queue_delete();
 
 	// Queue Length
 	test_invalid_null_input_queue_length();
