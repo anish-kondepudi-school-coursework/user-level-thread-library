@@ -107,6 +107,31 @@ void test_invalid_null_data_input_queue_delete()
 	TEST_ASSERT(queue_delete(q, NULL) == -1);
 }
 
+void test_simple_queue_delete()
+{
+	fprintf(stderr, "\n*** TEST test_simple_queue_delete ***\n");
+
+	queue_t q = queue_create();
+
+	int data[] = { 1, 2, 3, 4, 5 };
+	for (int i = 0; i < 5; i++) {
+		queue_enqueue(q, &data[i]);
+	}
+
+	TEST_ASSERT(queue_delete(q, &data[2]) == 0);
+	TEST_ASSERT(queue_length(q) == 4);
+
+	int *ptr;
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+	TEST_ASSERT(*ptr == 1);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+	TEST_ASSERT(*ptr == 2);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+	TEST_ASSERT(*ptr == 4);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
+	TEST_ASSERT(*ptr == 5);
+}
+
 void test_empty_queue_dequeue()
 {
 	fprintf(stderr, "\n*** TEST test_empty_queue_dequeue ***\n");
@@ -184,6 +209,7 @@ int main(void)
 	// Queue Delete
 	test_invalid_null_queue_input_queue_delete();
 	test_invalid_null_data_input_queue_delete();
+	test_simple_queue_delete();
 
 	// Queue Length
 	test_invalid_null_input_queue_length();
