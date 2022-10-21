@@ -127,16 +127,16 @@ int queue_delete(queue_t queue, void *data)
 	// Remove node from linked list
 	node_t temp = curr_node;
 	prev_node->next = curr_node->next;
-
 	free(temp);
 	queue->length--;
+
 	return 0;
 }
 
 int queue_iterate(queue_t queue, queue_func_t func)
 {
 	unsigned processed_idx = 0;
-	node_t processed[queue->length * 5]; // Making assumption that queue_func_t wont insert more than 4x current size of queue items
+	node_t processed[queue->length * 5]; // Making assumption that queue_func_t wont insert more than 4x current size of queue items (Should fix this in future, so we aren't relying on an assumption for the code to work)
 	node_t curr_node = queue->front;
 
 	while (curr_node != NULL) {
