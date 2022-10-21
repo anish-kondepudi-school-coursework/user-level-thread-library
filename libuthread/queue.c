@@ -102,7 +102,6 @@ int queue_delete(queue_t queue, void *data)
 		return -1;
 	}
 
-
 	// Node to remove is head of linked list
 	if (queue->front->data == data) {
 		node_t temp = queue->front;
@@ -128,6 +127,7 @@ int queue_delete(queue_t queue, void *data)
 	// Remove node from linked list
 	node_t temp = curr_node;
 	prev_node->next = curr_node->next;
+
 	free(temp);
 	queue->length--;
 	return 0;
@@ -135,14 +135,27 @@ int queue_delete(queue_t queue, void *data)
 
 int queue_iterate(queue_t queue, queue_func_t func)
 {
-	void* processed[queue->length];
-
-
+	unsigned processed_idx = 0;
+	node_t processed[queue->length];
 	node_t curr_node = queue->front;
+
 	while (curr_node != NULL) {
-		node_t next_node = curr_node->next;
+		int already_processed = 0;
+		for (unsigned i = 0; i < processed_idx; i++) {
+			if (curr_node == processed[i]) {
+				already_processed = 1;
+				break;
+			}
+		}
+
+		if (already_processed) {
+			curr_node = curr_node->next;
+			continue;
+		}
+
+		processed[processed_idx++] = curr_node;
 		(*func)(queue, curr_node->data);
-		curr_node = next_node;
+		curr_node = queue->front;
 	}
 
 	return 0;
