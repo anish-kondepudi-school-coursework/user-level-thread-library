@@ -111,7 +111,36 @@ int queue_dequeue(queue_t queue, void **data)
 
 int queue_delete(queue_t queue, void *data)
 {
-	/* TODO Phase 1 */
+	if (queue == NULL || data == NULL) {
+		return -1;
+	}
+
+	int idx_to_delete = -1;
+	unsigned curr_idx = queue->front;
+	do {
+		if (queue->array[curr_idx] == data) {
+			idx_to_delete = curr_idx;
+			break;
+		}
+		curr_idx = (curr_idx + 1) % queue->capacity;
+	} while (curr_idx != (queue->back + 1) % queue->capacity);
+
+	if (idx_to_delete == -1) {
+		return -1;
+	}
+
+	curr_idx = queue->front;
+	do {
+		int next_idx = (curr_idx + 1) % queue->capacity;
+		queue->array[curr_idx] = queue->array[next_idx];
+	} while (curr_idx != queue->back);
+
+	if ((queue->back != queue->front) && (--queue->back == -1)) {
+		queue->back = queue->capacity - 1;
+	}
+
+	queue->size--;
+
 	return 0;
 }
 
