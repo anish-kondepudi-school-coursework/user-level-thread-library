@@ -39,12 +39,16 @@ queue_t queue_create(void)
 
 int queue_destroy(queue_t queue)
 {
-	if (queue == NULL || !is_empty(queue)) {
+	if (queue == NULL || queue->front != NULL) {
 		return -1;
 	}
 
-	free(queue->array);
-	free(queue);
+	node_t curr_node = queue->front;
+	while (curr_node) {
+		node_t next_node = curr_node->next;
+		free(curr_node);
+		curr_node = next_node;
+	}
 
 	return 0;
 }
