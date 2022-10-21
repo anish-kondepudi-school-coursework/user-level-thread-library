@@ -10,43 +10,6 @@ struct queue {
 	void** array;
 };
 
-int is_full(queue_t queue)
-{
-	return queue->size == queue->capacity;
-}
-
-int is_empty(queue_t queue)
-{
-	return queue->size == 0;
-}
-
-int resize_queue(queue_t queue)
-{
-	int new_capacity = queue->capacity * 2;
-	void** new_array = (void**) malloc(new_capacity * sizeof(void*));
-
-	if (new_array == NULL) {
-		return -1;
-	}
-
-	unsigned new_queue_idx = 0;
-	unsigned old_queue_idx = queue->front;
-	do {
-		new_array[new_queue_idx++] = queue->array[old_queue_idx];
-		old_queue_idx = (old_queue_idx + 1) % queue->capacity;
-	} while (old_queue_idx != (queue->back + 1) % queue->capacity);
-
-	free(queue->array);
-
-	queue->array = new_array;
-	queue->size = new_capacity / 2;
-	queue->capacity = new_capacity;
-	queue->front = 0;
-	queue->back = new_capacity / 2 - 1;
-
-	return 0;
-}
-
 queue_t queue_create(void)
 {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
@@ -56,9 +19,7 @@ queue_t queue_create(void)
 		return NULL;
 	}
 
-	queue->array = array;
-	queue->front = queue->back = queue->size = 0;
-	queue->capacity = 1;
+
 
 	return queue;
 }
@@ -81,13 +42,7 @@ int queue_enqueue(queue_t queue, void *data)
 		return -1;
 	}
 
-	if (is_full(queue) && resize_queue(queue) == -1) {
-		return -1;
-	}
 
-	queue->back = (queue->back + 1) % queue->capacity;
-	queue->size++;
-	queue->array[queue->back] = data;
 
 	return 0;
 }
@@ -98,13 +53,7 @@ int queue_dequeue(queue_t queue, void **data)
 		return -1;
 	}
 
-	void* item = queue->array[queue->front];
-	*data = item;
 
-	queue->size--;
-	if (queue->front != queue->back) {
-		queue->front = (queue->front + 1) % queue->capacity;
-	}
 
 	return 0;
 }
@@ -115,43 +64,16 @@ int queue_delete(queue_t queue, void *data)
 		return -1;
 	}
 
-	int idx_to_delete = -1;
-	unsigned curr_idx = queue->front;
-	do {
-		if (queue->array[curr_idx] == data) {
-			idx_to_delete = curr_idx;
-			break;
-		}
-		curr_idx = (curr_idx + 1) % queue->capacity;
-	} while (curr_idx != (queue->back + 1) % queue->capacity);
-
-	if (idx_to_delete == -1) {
-		return -1;
-	}
-
-	curr_idx = idx_to_delete;
-	while (curr_idx != queue->back) {
-		int next_idx = (curr_idx + 1) % queue->capacity;
-		queue->array[curr_idx] = queue->array[next_idx];
-		curr_idx = next_idx;
-	}
-
-	if ((queue->back != queue->front) && (--queue->back == -1)) {
-		queue->back = queue->capacity - 1;
-	}
-
-	queue->size--;
 
 	return 0;
 }
 
 int queue_iterate(queue_t queue, queue_func_t func)
 {
-	/* TODO Phase 1 */
 	return 0;
 }
 
 int queue_length(queue_t queue)
 {
-	return (queue == NULL) ? -1 : queue->size;
+	return -1;
 }
