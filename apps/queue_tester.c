@@ -406,8 +406,8 @@ void test_simple_queue_iterator(void)
     // Increment every item of the queue, delete item '42'
     queue_iterate(q, iterator_inc);
 
-    assert(data[0] == 2);
-    assert(queue_length(q) == 9);
+    TEST_ASSERT(data[0] == 2);
+    TEST_ASSERT(queue_length(q) == 9);
 }
 
 int main(void)
