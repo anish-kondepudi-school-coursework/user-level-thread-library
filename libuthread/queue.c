@@ -59,8 +59,14 @@ int queue_enqueue(queue_t queue, void *data)
 		return -1;
 	}
 
+	node_t new_node = create_new_node(data);
+	if (queue->back == NULL) {
+		queue->front = new_node;
+		return 0;
+	}
 
-
+	queue->back->next = new_node;
+	queue->back = new_node;
 	return 0;
 }
 
