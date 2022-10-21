@@ -15,6 +15,17 @@ do {										\
 	printf("\tASSERT: " #assert "\n");		\
 } while(0)									\
 
+static void iterator_inc(queue_t q, void *data)
+{
+    int *a = (int*)data;
+
+    if (*a == 42) {
+        queue_delete(q, data);
+	} else {
+        *a += 1;
+	}
+}
+
 void test_create_queue(void)
 {
 	fprintf(stderr, "\n*** TEST queue_create ***\n");
@@ -124,7 +135,7 @@ void test_delete_non_existent_item_even_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4, 5, 6 };
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]) - 1; i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -133,7 +144,7 @@ void test_delete_non_existent_item_even_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -146,7 +157,7 @@ void test_delete_non_existent_item_odd_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]) - 1; i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -155,7 +166,7 @@ void test_delete_non_existent_item_odd_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -168,7 +179,7 @@ void test_first_last_item_odd_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -177,7 +188,7 @@ void test_first_last_item_odd_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 2, 3, 4, 5 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -190,7 +201,7 @@ void test_first_last_item_even_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -199,7 +210,7 @@ void test_first_last_item_even_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 2, 3, 4 };
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -212,7 +223,7 @@ void test_delete_middle_item_odd_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -221,7 +232,7 @@ void test_delete_middle_item_odd_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 2, 4, 5 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -234,7 +245,7 @@ void test_delete_middle_item_even_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -243,7 +254,7 @@ void test_delete_middle_item_even_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 3, 4 };
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -256,7 +267,7 @@ void test_delete_last_item_odd_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -265,7 +276,7 @@ void test_delete_last_item_odd_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -278,7 +289,7 @@ void test_delete_last_item_even_length_queue_delete()
 	queue_t q = queue_create();
 
 	int data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -287,7 +298,7 @@ void test_delete_last_item_even_length_queue_delete()
 
 	int *ptr;
 	int dequeue_data[] = { 1, 2, 3 };
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -308,7 +319,7 @@ void test_delete_item_when_queue_has_been_used_queue_delete()
 	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 
 	int data[] = { 1, 2, 3, 4 };
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
 		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
@@ -316,7 +327,7 @@ void test_delete_item_when_queue_has_been_used_queue_delete()
 	TEST_ASSERT(queue_length(q) == 3);
 
 	int dequeue_data[] = { 1, 2, 4 };
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < sizeof(dequeue_data) / sizeof(dequeue_data[0]); i++) {
 		TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 		TEST_ASSERT(*ptr == dequeue_data[i]);
 	}
@@ -381,6 +392,24 @@ void test_empty_queue_length()
 	TEST_ASSERT(queue_length(q) == 1);
 }
 
+void test_simple_queue_iterator(void)
+{
+    queue_t q;
+    int data[] = {1, 2, 3, 4, 5, 42, 6, 7, 8, 9};
+    size_t i;
+
+    q = queue_create();
+    for (i = 0; i < sizeof(data) / sizeof(data[0]); i++) {
+        queue_enqueue(q, &data[i]);
+	}
+
+    // Increment every item of the queue, delete item '42'
+    queue_iterate(q, iterator_inc);
+
+    assert(data[0] == 2);
+    assert(queue_length(q) == 9);
+}
+
 int main(void)
 {
 	// Queue Create
@@ -413,6 +442,9 @@ int main(void)
 	test_delete_last_item_odd_length_queue_delete();
 	test_delete_last_item_even_length_queue_delete();
 	test_delete_item_when_queue_has_been_used_queue_delete();
+
+	// Queue Iterate
+	test_simple_queue_iterator();
 
 	// Queue Length
 	test_invalid_null_input_queue_length();
