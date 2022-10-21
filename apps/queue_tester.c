@@ -161,9 +161,9 @@ void test_delete_non_existent_item_when_max_capacity_queue_delete()
 	}
 }
 
-void test_first_last_item_queue_delete()
+void test_first_last_item_when_not_max_capacity_queue_delete()
 {
-	fprintf(stderr, "\n*** TEST test_first_last_item_queue_delete ***\n");
+	fprintf(stderr, "\n*** TEST test_first_last_item_when_not_max_capacity_queue_delete ***\n");
 
 	queue_t q = queue_create();
 
@@ -183,9 +183,9 @@ void test_first_last_item_queue_delete()
 	}
 }
 
-void test_delete_middle_item_queue_delete()
+void test_delete_middle_item_when_not_max_capacity_queue_delete()
 {
-	fprintf(stderr, "\n*** TEST test_delete_middle_item_queue_delete ***\n");
+	fprintf(stderr, "\n*** TEST test_delete_middle_item_when_not_max_capacity_queue_delete ***\n");
 
 	queue_t q = queue_create();
 
@@ -205,9 +205,9 @@ void test_delete_middle_item_queue_delete()
 	}
 }
 
-void test_delete_last_item_queue_delete()
+void test_delete_last_item_when_not_max_capacity_queue_delete()
 {
-	fprintf(stderr, "\n*** TEST test_delete_last_item_queue_delete ***\n");
+	fprintf(stderr, "\n*** TEST test_delete_last_item_when_not_max_capacity_queue_delete ***\n");
 
 	queue_t q = queue_create();
 
@@ -311,9 +311,9 @@ int main(void)
 	test_empty_queue_input_queue_delete();
 	test_delete_non_existent_item_when_not_max_capacity_queue_delete();
 	test_delete_non_existent_item_when_max_capacity_queue_delete();
-	test_first_last_item_queue_delete();
-	test_delete_middle_item_queue_delete();
-	test_delete_last_item_queue_delete();
+	test_first_last_item_when_not_max_capacity_queue_delete();
+	test_delete_middle_item_when_not_max_capacity_queue_delete();
+	test_delete_last_item_when_not_max_capacity_queue_delete();
 
 	// Queue Length
 	test_invalid_null_input_queue_length();
