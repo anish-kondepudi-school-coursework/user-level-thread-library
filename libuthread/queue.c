@@ -46,7 +46,7 @@ int queue_destroy(queue_t queue)
 	}
 
 	node_t curr_node = queue->front;
-	while (curr_node) {
+	while (curr_node != NULL) {
 		node_t next_node = curr_node->next;
 		free(curr_node);
 		curr_node = next_node;
