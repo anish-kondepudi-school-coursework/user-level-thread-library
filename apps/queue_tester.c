@@ -46,8 +46,8 @@ void test_invalid_full_queue_input_queue_destroy()
 
 	int data = 3;
 	queue_t q = queue_create();
-	queue_enqueue(q, &data);
-	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
 	TEST_ASSERT(queue_destroy(q) == -1);
 }
 
@@ -115,7 +115,7 @@ void test_simple_queue_delete()
 
 	int data[] = { 1, 2, 3, 4, 5 };
 	for (int i = 0; i < 5; i++) {
-		queue_enqueue(q, &data[i]);
+		TEST_ASSERT(queue_enqueue(q, &data[i]) == 0);
 	}
 
 	TEST_ASSERT(queue_delete(q, &data[2]) == 0);
@@ -152,15 +152,19 @@ void test_simple_queue_length()
 	fprintf(stderr, "\n*** TEST test_simple_queue_length ***\n");
 
 	int data = 3;
+	int aggregated_enqueue_retval = 0;
 	queue_t q = queue_create();
 	for (int i = 0; i < 100; i++) {
-		queue_enqueue(q, &data);
+		aggregated_enqueue_retval += queue_enqueue(q, &data);
 	}
+	TEST_ASSERT(aggregated_enqueue_retval == 0);
 
 	int* ptr;
+	int aggregated_dequeue_retval = 0;
 	for (int i = 0; i < 50; i++) {
-		queue_dequeue(q, (void**)&ptr);
+		aggregated_dequeue_retval += queue_dequeue(q, (void**)&ptr);
 	}
+	TEST_ASSERT(aggregated_dequeue_retval == 0);
 
 	TEST_ASSERT(queue_length(q) == 50);
 }
@@ -173,17 +177,17 @@ void test_empty_queue_length()
 	queue_t q = queue_create();
 	TEST_ASSERT(queue_length(q) == 0);
 
-	queue_enqueue(q, &data);
-	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
 	TEST_ASSERT(queue_length(q) == 2);
 
-	queue_dequeue(q, (void**)&ptr);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 	TEST_ASSERT(queue_length(q) == 1);
 
-	queue_dequeue(q, (void**)&ptr);
+	TEST_ASSERT(queue_dequeue(q, (void**)&ptr) == 0);
 	TEST_ASSERT(queue_length(q) == 0);
 
-	queue_enqueue(q, &data);
+	TEST_ASSERT(queue_enqueue(q, &data) == 0);
 	TEST_ASSERT(queue_length(q) == 1);
 }
 
