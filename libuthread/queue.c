@@ -3,25 +3,25 @@
 #include <string.h>
 
 #include "queue.h"
-#include <stdio.h>
+
+struct node {
+	void* data;
+	node_t next;
+};
 
 struct queue {
-	unsigned front, back, size, capacity;
-	void** array;
+	node_t front, back;
 };
 
 queue_t queue_create(void)
 {
-	queue_t queue = (queue_t) malloc(sizeof(struct queue));
-	void** array =  (void**) malloc(queue->capacity * sizeof(void*));
-
-	if (queue == NULL || array == NULL) {
-		return NULL;
-	}
+	// if (queue == NULL || array == NULL) {
+	// 	return NULL;
+	// }
 
 
 
-	return queue;
+	return NULL;
 }
 
 int queue_destroy(queue_t queue)
