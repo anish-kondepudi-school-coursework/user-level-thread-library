@@ -62,6 +62,10 @@ int queue_enqueue(queue_t queue, void *data)
 	}
 
 	node_t new_node = create_new_node(data);
+	if (new_node == NULL) {
+		return -1;
+	}
+
 	if (queue->back == NULL) {
 		queue->front = queue->back = new_node;
 	} else {
@@ -131,6 +135,9 @@ int queue_delete(queue_t queue, void *data)
 
 int queue_iterate(queue_t queue, queue_func_t func)
 {
+	void* processed[queue->length];
+
+
 	node_t curr_node = queue->front;
 	while (curr_node != NULL) {
 		node_t next_node = curr_node->next;
