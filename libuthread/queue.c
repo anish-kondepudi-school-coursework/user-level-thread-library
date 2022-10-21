@@ -130,11 +130,11 @@ int queue_delete(queue_t queue, void *data)
 	}
 
 	curr_idx = idx_to_delete;
-	do {
+	while (curr_idx != queue->back) {
 		int next_idx = (curr_idx + 1) % queue->capacity;
 		queue->array[curr_idx] = queue->array[next_idx];
 		curr_idx = next_idx;
-	} while (curr_idx != queue->back);
+	}
 
 	if ((queue->back != queue->front) && (--queue->back == -1)) {
 		queue->back = queue->capacity - 1;
