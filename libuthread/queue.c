@@ -26,8 +26,7 @@ node_t create_new_node(void* data) {
 	return node;
 }
 
-queue_t queue_create(void)
-{
+queue_t queue_create(void) {
 	queue_t queue = (queue_t) malloc(sizeof(struct queue));
 
 	if (queue == NULL) {
@@ -39,8 +38,7 @@ queue_t queue_create(void)
 	return queue;
 }
 
-int queue_destroy(queue_t queue)
-{
+int queue_destroy(queue_t queue) {
 	if (queue == NULL || queue->front != NULL) {
 		return -1;
 	}
@@ -55,8 +53,7 @@ int queue_destroy(queue_t queue)
 	return 0;
 }
 
-int queue_enqueue(queue_t queue, void *data)
-{
+int queue_enqueue(queue_t queue, void* data) {
 	if (queue == NULL || data == NULL) {
 		return -1;
 	}
@@ -68,7 +65,8 @@ int queue_enqueue(queue_t queue, void *data)
 
 	if (queue->back == NULL) {
 		queue->front = queue->back = new_node;
-	} else {
+	}
+	else {
 		queue->back->next = new_node;
 		queue->back = new_node;
 	}
@@ -77,8 +75,7 @@ int queue_enqueue(queue_t queue, void *data)
 	return 0;
 }
 
-int queue_dequeue(queue_t queue, void **data)
-{
+int queue_dequeue(queue_t queue, void** data) {
 	if (queue == NULL || data == NULL || queue->front == NULL) {
 		return -1;
 	}
@@ -96,8 +93,7 @@ int queue_dequeue(queue_t queue, void **data)
 	return 0;
 }
 
-int queue_delete(queue_t queue, void *data)
-{
+int queue_delete(queue_t queue, void* data) {
 	if (queue == NULL || data == NULL || queue->front == NULL) {
 		return -1;
 	}
@@ -133,8 +129,7 @@ int queue_delete(queue_t queue, void *data)
 	return 0;
 }
 
-int queue_iterate(queue_t queue, queue_func_t func)
-{
+int queue_iterate(queue_t queue, queue_func_t func) {
 	node_t curr_node = queue->front;
 
 	while (curr_node != NULL) {
@@ -147,7 +142,6 @@ int queue_iterate(queue_t queue, queue_func_t func)
 	return 0;
 }
 
-int queue_length(queue_t queue)
-{
+int queue_length(queue_t queue) {
 	return (queue == NULL) ? -1 : queue->length;
 }
