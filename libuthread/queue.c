@@ -43,13 +43,7 @@ int queue_destroy(queue_t queue) {
 		return -1;
 	}
 
-	node_t curr_node = queue->front;
-	while (curr_node != NULL) {
-		node_t next_node = curr_node->next;
-		free(curr_node);
-		curr_node = next_node;
-	}
-
+	free(queue);
 	return 0;
 }
 
