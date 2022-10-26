@@ -10,6 +10,8 @@
 #include "uthread.h"
 #include "queue.h"
 
+
+uthread_ctx_t main_ctx;
 queue_t queue;
 
 struct uthread_tcb {
@@ -40,7 +42,30 @@ int uthread_create(uthread_func_t func, void *arg)
 
 int uthread_start(uthread_func_t func, void *arg)
 {
-	/* TODO Phase 2 */
+	if (queue == NULL) {
+		queue = queue_create();
+
+		if (queue == NULL) {
+			printf("Error while creation queue\n");
+			return -1;
+		}
+	}
+
+	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	tcb->stack = uthread_ctx_alloc_stack();
+	if (tcb->stack == NULL) {
+		printf("Error unable to allocate space for stack\n");
+		return -1;
+	}
+	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
+
+	if (queue_enqueue(queue, tcb) == -1) {
+		printf("Error enqueueing\n");
+		return -1;
+	}
+
+	uthread_ctx_switch(&main_ctx, &(tcb->ctx));
+
 	return 0;
 }
 
