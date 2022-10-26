@@ -4,6 +4,15 @@
 #include <stdbool.h>
 
 /*
+* uthread_tcb_t - uthread_tcb type
+*
+* Stores a pointer to a uthread_tcb struct
+* which stores important information related
+* to a specific thread control block
+*/
+typedef struct uthread_tcb* uthread_tcb_t;
+
+/*
  * uthread_func_t - Thread function type
  * @arg: Argument to be passed to the thread
  */

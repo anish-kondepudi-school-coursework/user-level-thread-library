@@ -8,9 +8,13 @@
 
 #include "private.h"
 #include "uthread.h"
+#include "queue.h"
+
+queue_t queue;
 
 struct uthread_tcb {
-	/* TODO Phase 2 */
+	uthread_ctx_t ctx;
+	void* stack;
 };
 
 struct uthread_tcb *uthread_current(void)
@@ -31,11 +35,18 @@ void uthread_exit(void)
 int uthread_create(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
+	return 0;
 }
 
 int uthread_start(uthread_func_t func, void *arg)
 {
 	/* TODO Phase 2 */
+	return 0;
+}
+
+int uthread_run(bool preempt, uthread_func_t func, void *arg)
+{
+	return uthread_start(func, arg);
 }
 
 void uthread_block(void)
