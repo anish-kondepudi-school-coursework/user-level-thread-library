@@ -39,7 +39,7 @@ queue_t queue_create(void) {
 }
 
 int queue_destroy(queue_t queue) {
-	if (queue == NULL || queue->front != NULL) {
+	if (queue == NULL || queue->length != 0) {
 		return -1;
 	}
 
@@ -70,7 +70,7 @@ int queue_enqueue(queue_t queue, void* data) {
 }
 
 int queue_dequeue(queue_t queue, void** data) {
-	if (queue == NULL || data == NULL ||queue->front == NULL) {
+	if (queue == NULL || data == NULL || queue->length == 0) {
 		return -1;
 	}
 
@@ -89,7 +89,7 @@ int queue_dequeue(queue_t queue, void** data) {
 }
 
 int queue_delete(queue_t queue, void* data) {
-	if (queue == NULL || data == NULL || queue->front == NULL) {
+	if (queue == NULL || data == NULL || queue->length == 0) {
 		return -1;
 	}
 
