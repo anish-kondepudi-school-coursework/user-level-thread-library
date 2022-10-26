@@ -26,6 +26,7 @@ static void iterator_delete_tcb(queue_t queue, void* data) {
 	if (&tcb->ctx == current_ctx) {
 		queue_delete(queue, data);
 	}
+	// free data too
 }
 
 struct uthread_tcb *uthread_current(void)
@@ -35,7 +36,13 @@ struct uthread_tcb *uthread_current(void)
 
 void uthread_yield(void)
 {
-	/* TODO Phase 2 */
+	uthread_tcb_t tcb;
+	queue_dequeue(queue, (void**)&tcb);
+	queue_enqueue(queue, (void*)tcb);
+
+	uthread_ctx_t* previous_ctx = current_ctx;
+	current_ctx = &tcb->ctx;
+	uthread_ctx_switch(previous_ctx, current_ctx);
 }
 
 void uthread_exit(void)
@@ -46,16 +53,44 @@ void uthread_exit(void)
 	queue_iterate(queue, iterator_delete_tcb);
 	if (queue_length(queue) == 0) {
 		printf("Queue empty, returning main\n");
+		// make curr_ctx main_ctx
 		uthread_ctx_switch(current_ctx, main_ctx);
 	}
 	else {
 		printf("Queue not empty\n");
+
+		uthread_tcb_t tcb;
+
+		assert(queue_dequeue(queue, (void**)&tcb) == 0);
+		assert(queue_enqueue(queue, (void*)tcb) == 0);
+
+		uthread_ctx_t* previous_ctx = current_ctx;
+		current_ctx = &tcb->ctx;
+
+		uthread_ctx_switch(previous_ctx, current_ctx);
 	}
 }
 
 int uthread_create(uthread_func_t func, void *arg)
 {
-	/* TODO Phase 2 */
+	printf("Creating new thread\n");
+	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	tcb->stack = uthread_ctx_alloc_stack();
+	if (tcb->stack == NULL) {
+		printf("Error unable to allocate space for stack\n");
+		return -1;
+	}
+	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
+
+	if (queue_enqueue(queue, tcb) == -1) {
+		printf("Error enqueueing\n");
+		return -1;
+	}
+
+	uthread_ctx_t* previous_ctx = current_ctx;
+	current_ctx = &tcb->ctx;
+	uthread_ctx_switch(previous_ctx, current_ctx);
+
 	return 0;
 }
 
