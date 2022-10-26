@@ -11,13 +11,22 @@
 #include "queue.h"
 
 
-uthread_ctx_t main_ctx;
+uthread_ctx_t* main_ctx;
+uthread_ctx_t* current_ctx;
 queue_t queue;
 
 struct uthread_tcb {
 	uthread_ctx_t ctx;
 	void* stack;
 };
+
+static void iterator_delete_tcb(queue_t queue, void* data) {
+	uthread_tcb_t tcb = (uthread_tcb_t) data;
+
+	if (&tcb->ctx == current_ctx) {
+		queue_delete(queue, data);
+	}
+}
 
 struct uthread_tcb *uthread_current(void)
 {
@@ -31,7 +40,17 @@ void uthread_yield(void)
 
 void uthread_exit(void)
 {
-	/* TODO Phase 2 */
+	printf("Exiting\n");
+	assert(queue_length(queue) > 0);
+
+	queue_iterate(queue, iterator_delete_tcb);
+	if (queue_length(queue) == 0) {
+		printf("Queue empty, returning main\n");
+		uthread_ctx_switch(current_ctx, main_ctx);
+	}
+	else {
+		printf("Queue not empty\n");
+	}
 }
 
 int uthread_create(uthread_func_t func, void *arg)
@@ -44,6 +63,8 @@ int uthread_start(uthread_func_t func, void *arg)
 {
 	if (queue == NULL) {
 		queue = queue_create();
+		main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
+		current_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
 
 		if (queue == NULL) {
 			printf("Error while creation queue\n");
@@ -57,15 +78,17 @@ int uthread_start(uthread_func_t func, void *arg)
 		printf("Error unable to allocate space for stack\n");
 		return -1;
 	}
+
 	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
 
 	if (queue_enqueue(queue, tcb) == -1) {
 		printf("Error enqueueing\n");
 		return -1;
 	}
-
-	uthread_ctx_switch(&main_ctx, &(tcb->ctx));
-
+	printf("Main ctx start\n");
+	current_ctx = &tcb->ctx;
+	uthread_ctx_switch(main_ctx, current_ctx);
+	printf("Main ctx finish\n");
 	return 0;
 }
 
