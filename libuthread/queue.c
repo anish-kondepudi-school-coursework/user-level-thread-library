@@ -70,7 +70,7 @@ int queue_enqueue(queue_t queue, void* data) {
 }
 
 int queue_dequeue(queue_t queue, void** data) {
-	if (queue == NULL || data == NULL || queue->front == NULL) {
+	if (queue == NULL || data == NULL ||queue->front == NULL) {
 		return -1;
 	}
 
@@ -84,6 +84,7 @@ int queue_dequeue(queue_t queue, void** data) {
 	queue->length--;
 	*data = dequeued_node->data;
 	free(dequeued_node);
+
 	return 0;
 }
 
@@ -98,6 +99,11 @@ int queue_delete(queue_t queue, void* data) {
 		queue->front = queue->front->next;
 		free(temp);
 		queue->length--;
+
+		// Handle case where front item is only item in linked list
+		if (queue->front == NULL) {
+			queue->back = NULL;
+		}
 		return 0;
 	}
 
@@ -119,6 +125,11 @@ int queue_delete(queue_t queue, void* data) {
 	prev_node->next = curr_node->next;
 	free(temp);
 	queue->length--;
+
+	// Handle case where last node in linked list is removed
+	if (prev_node->next == NULL) {
+		queue->back = prev_node;
+	}
 
 	return 0;
 }
