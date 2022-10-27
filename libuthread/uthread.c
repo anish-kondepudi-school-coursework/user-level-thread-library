@@ -43,16 +43,21 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 	// Allocate stack for TCB
 	tcb->stack = uthread_ctx_alloc_stack();
 	if (tcb->stack == NULL) {
+		free(tcb);
 		return NULL;
 	}
 
 	// Initialize TCB
 	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
+		uthread_ctx_destroy_stack(tcb->stack);
+		free(tcb);
 		return NULL;
 	}
 
 	// Enqueue TCB
 	if (queue_enqueue(queue, tcb) == -1) {
+		uthread_ctx_destroy_stack(tcb->stack);
+		free(tcb);
 		return NULL;
 	}
 
@@ -60,7 +65,7 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 }
 
 void uthread_yield(void) {
-	// Find next tcb to switch to and move it to back of queue
+	// Find next TCB to switch to and move it to back of queue
 	uthread_tcb_t tcb;
 	assert(queue_dequeue(queue, (void**) &tcb) == 0);
 	assert(queue_enqueue(queue, (void*) tcb) == 0);
