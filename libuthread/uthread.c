@@ -53,8 +53,9 @@ void uthread_exit(void)
 	queue_iterate(queue, iterator_delete_tcb);
 	if (queue_length(queue) == 0) {
 		printf("Queue empty, returning main\n");
-		// make curr_ctx main_ctx
-		uthread_ctx_switch(current_ctx, main_ctx);
+		uthread_ctx_t* previous_ctx = current_ctx;
+		current_ctx = main_ctx;
+		uthread_ctx_switch(previous_ctx, current_ctx);
 	}
 	else {
 		printf("Queue not empty\n");
