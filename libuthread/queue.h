@@ -1,17 +1,6 @@
 #ifndef _QUEUE_H
 #define _QUEUE_H
 
-
-/*
- * node_t - Node type
- *
- * A node is a struct that we can chain together similar to a linked list.
- * The chain of these nodes can be used in the implementation of a queue.
- * A node must hold the specific data as well as a pointer to the next node
- * in the chain.
-*/
-typedef struct node* node_t;
-
 /*
  * queue_t - Queue type
  *
@@ -52,7 +41,7 @@ int queue_destroy(queue_t queue);
  * Enqueue the address contained in @data in the queue @queue.
  *
  * Return: -1 if @queue or @data are NULL, or in case of memory allocation error
- * when enqueuing. 0 if @data was successfully enqueued in @queue.
+ * when enqueing. 0 if @data was successfully enqueued in @queue.
  */
 int queue_enqueue(queue_t queue, void *data);
 
