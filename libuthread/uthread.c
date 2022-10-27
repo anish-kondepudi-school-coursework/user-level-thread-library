@@ -24,7 +24,7 @@ static void iterator_delete_tcb(queue_t queue, void* data) {
 	uthread_tcb_t tcb = (uthread_tcb_t) data;
 	if (&tcb->ctx == current_ctx) {
 		assert(queue_delete(queue, data) == 0);
-		free(tcb->stack);
+		uthread_ctx_destroy_stack(tcb->stack);
 		free(tcb);
 	}
 }
