@@ -14,6 +14,8 @@ uthread_ctx_t* main_ctx;
 uthread_ctx_t* current_ctx;
 queue_t queue;
 
+typedef struct uthread_tcb* uthread_tcb_t;
+
 struct uthread_tcb {
 	uthread_ctx_t ctx;
 	void* stack;
