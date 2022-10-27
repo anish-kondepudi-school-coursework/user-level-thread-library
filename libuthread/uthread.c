@@ -64,6 +64,11 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 	return tcb;
 }
 
+void switch_context(uthread_ctx_t* previous_ctx, uthread_ctx_t* new_ctx) {
+	current_ctx = new_ctx;
+	uthread_ctx_switch(previous_ctx, new_ctx);
+}
+
 void uthread_yield(void) {
 	// Find next TCB to switch to and move it to back of queue
 	uthread_tcb_t tcb;
@@ -71,9 +76,7 @@ void uthread_yield(void) {
 	assert(queue_enqueue(queue, (void*) tcb) == 0);
 
 	// Switch context to execute next thread
-	uthread_ctx_t* previous_ctx = current_ctx;
-	current_ctx = &tcb->ctx;
-	uthread_ctx_switch(previous_ctx, current_ctx);
+	switch_context(current_ctx, &tcb->ctx);
 }
 
 void uthread_exit(void) {
@@ -87,9 +90,7 @@ void uthread_exit(void) {
 	}
 
 	// Switch context to main thread (since all threads are done)
-	uthread_ctx_t* previous_ctx = current_ctx;
-	current_ctx = main_ctx;
-	uthread_ctx_switch(previous_ctx, current_ctx);
+	switch_context(current_ctx, main_ctx);
 }
 
 int uthread_create(uthread_func_t func, void* arg) {
@@ -100,9 +101,7 @@ int uthread_create(uthread_func_t func, void* arg) {
 	}
 
 	// Switch context to execute newly created thread
-	uthread_ctx_t* previous_ctx = current_ctx;
-	current_ctx = &tcb->ctx;
-	uthread_ctx_switch(previous_ctx, current_ctx);
+	switch_context(current_ctx, &tcb->ctx);
 
 	return 0;
 }
@@ -130,8 +129,7 @@ int uthread_start(uthread_func_t func, void* arg) {
 	}
 
 	// Switch context to execute newly created thread
-	current_ctx = &tcb->ctx;
-	uthread_ctx_switch(main_ctx, current_ctx);
+	switch_context(main_ctx, &tcb->ctx);
 
 	return 0;
 }
