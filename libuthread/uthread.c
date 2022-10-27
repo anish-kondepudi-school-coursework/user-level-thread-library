@@ -29,24 +29,21 @@ static void iterator_delete_tcb(queue_t queue, void* data) {
 	}
 }
 
-struct uthread_tcb *uthread_current(void)
-{
+struct uthread_tcb* uthread_current(void) {
 	/* TODO Phase 2/4 */
 }
 
-void uthread_yield(void)
-{
+void uthread_yield(void) {
 	uthread_tcb_t tcb;
-	queue_dequeue(queue, (void**)&tcb);
-	queue_enqueue(queue, (void*)tcb);
+	queue_dequeue(queue, (void**) &tcb);
+	queue_enqueue(queue, (void*) tcb);
 
 	uthread_ctx_t* previous_ctx = current_ctx;
 	current_ctx = &tcb->ctx;
 	uthread_ctx_switch(previous_ctx, current_ctx);
 }
 
-void uthread_exit(void)
-{
+void uthread_exit(void) {
 	printf("Exiting\n");
 	assert(queue_length(queue) > 0);
 
@@ -62,8 +59,8 @@ void uthread_exit(void)
 
 		uthread_tcb_t tcb;
 
-		assert(queue_dequeue(queue, (void**)&tcb) == 0);
-		assert(queue_enqueue(queue, (void*)tcb) == 0);
+		assert(queue_dequeue(queue, (void**) &tcb) == 0);
+		assert(queue_enqueue(queue, (void*) tcb) == 0);
 
 		uthread_ctx_t* previous_ctx = current_ctx;
 		current_ctx = &tcb->ctx;
@@ -72,8 +69,7 @@ void uthread_exit(void)
 	}
 }
 
-int uthread_create(uthread_func_t func, void *arg)
-{
+int uthread_create(uthread_func_t func, void* arg) {
 	printf("Creating new thread\n");
 	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
 	tcb->stack = uthread_ctx_alloc_stack();
@@ -95,8 +91,7 @@ int uthread_create(uthread_func_t func, void *arg)
 	return 0;
 }
 
-int uthread_start(uthread_func_t func, void *arg)
-{
+int uthread_start(uthread_func_t func, void* arg) {
 	if (queue == NULL) {
 		queue = queue_create();
 		main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
@@ -128,18 +123,15 @@ int uthread_start(uthread_func_t func, void *arg)
 	return 0;
 }
 
-int uthread_run(bool preempt, uthread_func_t func, void *arg)
-{
+int uthread_run(bool preempt, uthread_func_t func, void* arg) {
 	return uthread_start(func, arg);
 }
 
-void uthread_block(void)
-{
+void uthread_block(void) {
 	/* TODO Phase 4 */
 }
 
-void uthread_unblock(struct uthread_tcb *uthread)
-{
+void uthread_unblock(struct uthread_tcb* uthread) {
 	/* TODO Phase 4 */
 }
 
