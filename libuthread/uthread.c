@@ -83,7 +83,9 @@ int uthread_create(uthread_func_t func, void* arg) {
 	}
 
 	// Initialize TCB
-	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
+	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
+		return -1;
+	}
 
 	// Enqueue TCB
 	if (queue_enqueue(queue, tcb) == -1) {
@@ -99,6 +101,7 @@ int uthread_create(uthread_func_t func, void* arg) {
 }
 
 int uthread_start(uthread_func_t func, void* arg) {
+	// Initialize queue if needed
 	if (queue == NULL) {
 		queue = queue_create();
 		main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
