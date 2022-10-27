@@ -22,11 +22,11 @@ struct uthread_tcb {
 
 static void iterator_delete_tcb(queue_t queue, void* data) {
 	uthread_tcb_t tcb = (uthread_tcb_t) data;
-
 	if (&tcb->ctx == current_ctx) {
-		queue_delete(queue, data);
+		assert(queue_delete(queue, data) == 0);
+		free(tcb->stack);
+		free(tcb);
 	}
-	// free data too
 }
 
 struct uthread_tcb *uthread_current(void)
