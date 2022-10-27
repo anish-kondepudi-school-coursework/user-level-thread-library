@@ -10,7 +10,6 @@
 #include "uthread.h"
 #include "queue.h"
 
-
 uthread_ctx_t* main_ctx;
 uthread_ctx_t* current_ctx;
 queue_t queue;
@@ -27,10 +26,6 @@ static void iterator_delete_tcb(queue_t queue, void* data) {
 		uthread_ctx_destroy_stack(tcb->stack);
 		free(tcb);
 	}
-}
-
-struct uthread_tcb* uthread_current(void) {
-	/* TODO Phase 2/4 */
 }
 
 uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
@@ -135,6 +130,8 @@ int uthread_start(uthread_func_t func, void* arg) {
 }
 
 int uthread_run(bool preempt, uthread_func_t func, void* arg) {
+	// Making uthread_run a wrapper around uthread_star for now
+	// since I'm not sure how "preempt is going to be used in phase 3
 	return uthread_start(func, arg);
 }
 
