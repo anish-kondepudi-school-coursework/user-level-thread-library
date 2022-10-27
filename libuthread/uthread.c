@@ -33,6 +33,32 @@ struct uthread_tcb* uthread_current(void) {
 	/* TODO Phase 2/4 */
 }
 
+uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
+	// Create TCB
+	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	if (tcb == NULL) {
+		return NULL;
+	}
+
+	// Allocate stack for TCB
+	tcb->stack = uthread_ctx_alloc_stack();
+	if (tcb->stack == NULL) {
+		return NULL;
+	}
+
+	// Initialize TCB
+	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
+		return NULL;
+	}
+
+	// Enqueue TCB
+	if (queue_enqueue(queue, tcb) == -1) {
+		return NULL;
+	}
+
+	return tcb;
+}
+
 void uthread_yield(void) {
 	// Find next tcb to switch to and move it to back of queue
 	uthread_tcb_t tcb;
@@ -63,24 +89,8 @@ void uthread_exit(void) {
 
 int uthread_create(uthread_func_t func, void* arg) {
 	// Create TCB
-	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	uthread_tcb_t tcb = create_tcb(func, arg);
 	if (tcb == NULL) {
-		return -1;
-	}
-
-	// Allocate stack for TCB
-	tcb->stack = uthread_ctx_alloc_stack();
-	if (tcb->stack == NULL) {
-		return -1;
-	}
-
-	// Initialize TCB
-	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
-		return -1;
-	}
-
-	// Enqueue TCB
-	if (queue_enqueue(queue, tcb) == -1) {
 		return -1;
 	}
 
@@ -109,24 +119,8 @@ int uthread_start(uthread_func_t func, void* arg) {
 	}
 
 	// Create TCB
-	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	uthread_tcb_t tcb = create_tcb(func, arg);
 	if (tcb == NULL) {
-		return -1;
-	}
-
-	// Allocate stack for TCB
-	tcb->stack = uthread_ctx_alloc_stack();
-	if (tcb->stack == NULL) {
-		return -1;
-	}
-
-	// Initialize TCB
-	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
-		return -1;
-	}
-
-	// Enqueue TCB
-	if (queue_enqueue(queue, tcb) == -1) {
 		return -1;
 	}
 
