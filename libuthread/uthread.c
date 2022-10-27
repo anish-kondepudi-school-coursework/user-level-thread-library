@@ -34,10 +34,12 @@ struct uthread_tcb* uthread_current(void) {
 }
 
 void uthread_yield(void) {
+	// Find next tcb to switch to and move it to back of queue
 	uthread_tcb_t tcb;
 	queue_dequeue(queue, (void**) &tcb);
 	queue_enqueue(queue, (void*) tcb);
 
+	// Switch context to execute next tcb
 	uthread_ctx_t* previous_ctx = current_ctx;
 	current_ctx = &tcb->ctx;
 	uthread_ctx_switch(previous_ctx, current_ctx);
