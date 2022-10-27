@@ -39,7 +39,7 @@ void uthread_yield(void) {
 	queue_dequeue(queue, (void**) &tcb);
 	queue_enqueue(queue, (void*) tcb);
 
-	// Switch context to execute next tcb
+	// Switch context to execute next thread
 	uthread_ctx_t* previous_ctx = current_ctx;
 	current_ctx = &tcb->ctx;
 	uthread_ctx_switch(previous_ctx, current_ctx);
@@ -51,22 +51,20 @@ void uthread_exit(void) {
 
 	queue_iterate(queue, iterator_delete_tcb);
 	if (queue_length(queue) == 0) {
-		printf("Queue empty, returning main\n");
+		// Switch context to main thread (since all threads are done)
 		uthread_ctx_t* previous_ctx = current_ctx;
 		current_ctx = main_ctx;
 		uthread_ctx_switch(previous_ctx, current_ctx);
 	}
 	else {
-		printf("Queue not empty\n");
-
+		// Find next tcb to switch to and move it to back of queue
 		uthread_tcb_t tcb;
-
 		assert(queue_dequeue(queue, (void**) &tcb) == 0);
 		assert(queue_enqueue(queue, (void*) tcb) == 0);
 
+		// Switch context to execute next thread
 		uthread_ctx_t* previous_ctx = current_ctx;
 		current_ctx = &tcb->ctx;
-
 		uthread_ctx_switch(previous_ctx, current_ctx);
 	}
 }
