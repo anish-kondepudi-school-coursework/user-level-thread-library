@@ -101,35 +101,47 @@ int uthread_create(uthread_func_t func, void* arg) {
 }
 
 int uthread_start(uthread_func_t func, void* arg) {
-	// Initialize queue if needed
-	if (queue == NULL) {
+	// Initialize global data members if needed
+	bool global_data_members_uninitialized =
+		queue == NULL &&
+		main_ctx == NULL &&
+		current_ctx == NULL;
+	if (global_data_members_uninitialized) {
 		queue = queue_create();
 		main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
 		current_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
 
-		if (queue == NULL) {
-			printf("Error while creation queue\n");
+		if (queue == NULL || main_ctx == NULL || current_ctx == NULL) {
 			return -1;
 		}
 	}
 
+	// Create TCB
 	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	if (tcb == NULL) {
+		return -1;
+	}
+
+	// Allocate stack for TCB
 	tcb->stack = uthread_ctx_alloc_stack();
 	if (tcb->stack == NULL) {
-		printf("Error unable to allocate space for stack\n");
 		return -1;
 	}
 
-	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
+	// Initialize TCB
+	if (uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg) == -1) {
+		return -1;
+	}
 
+	// Enqueue TCB
 	if (queue_enqueue(queue, tcb) == -1) {
-		printf("Error enqueueing\n");
 		return -1;
 	}
-	printf("Main ctx start\n");
+
+	// Switch context to execute newly created thread
 	current_ctx = &tcb->ctx;
 	uthread_ctx_switch(main_ctx, current_ctx);
-	printf("Main ctx finish\n");
+
 	return 0;
 }
 
