@@ -148,5 +148,5 @@ int queue_iterate(queue_t queue, queue_func_t func) {
 }
 
 int queue_length(queue_t queue) {
-	return (queue == NULL) ? -1 : queue->length;
+	return (queue == NULL) ? -1 : (int) queue->length;
 }
