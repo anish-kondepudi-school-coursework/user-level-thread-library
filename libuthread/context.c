@@ -7,8 +7,7 @@
 /* Size of the stack for a thread (in bytes) */
 #define UTHREAD_STACK_SIZE 32768
 
-void uthread_ctx_switch(uthread_ctx_t *prev, uthread_ctx_t *next)
-{
+void uthread_ctx_switch(uthread_ctx_t* prev, uthread_ctx_t* next) {
 	/*
 	 * swapcontext() saves the current context in structure pointer by @prev
 	 * and actives the context pointed by @next
@@ -19,13 +18,11 @@ void uthread_ctx_switch(uthread_ctx_t *prev, uthread_ctx_t *next)
 	}
 }
 
-void *uthread_ctx_alloc_stack(void)
-{
+void* uthread_ctx_alloc_stack(void) {
 	return malloc(UTHREAD_STACK_SIZE);
 }
 
-void uthread_ctx_destroy_stack(void *top_of_stack)
-{
+void uthread_ctx_destroy_stack(void* top_of_stack) {
 	free(top_of_stack);
 }
 
@@ -34,8 +31,7 @@ void uthread_ctx_destroy_stack(void *top_of_stack)
  * @func: Function to be executed by the new thread
  * @arg: Argument to be passed to the thread
  */
-static void uthread_ctx_bootstrap(uthread_func_t func, void *arg)
-{
+static void uthread_ctx_bootstrap(uthread_func_t func, void* arg) {
 	/*
 	 * Enable interrupts right after being elected to run for the first time
 	 */
@@ -46,9 +42,8 @@ static void uthread_ctx_bootstrap(uthread_func_t func, void *arg)
 	uthread_exit();
 }
 
-int uthread_ctx_init(uthread_ctx_t *uctx, void *top_of_stack,
-		     uthread_func_t func, void *arg)
-{
+int uthread_ctx_init(uthread_ctx_t* uctx, void* top_of_stack,
+	uthread_func_t func, void* arg) {
 	/*
 	 * Initialize the passed context @uctx to the currently active context
 	 */
@@ -69,7 +64,7 @@ int uthread_ctx_init(uthread_ctx_t *uctx, void *top_of_stack,
 	 *   arguments: @func and @arg
 	 */
 	makecontext(uctx, (void (*)(void)) uthread_ctx_bootstrap,
-		    2, func, arg);
+		2, func, arg);
 
 	return 0;
 }
