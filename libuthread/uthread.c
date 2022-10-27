@@ -46,10 +46,9 @@ void uthread_yield(void) {
 }
 
 void uthread_exit(void) {
-	printf("Exiting\n");
-	assert(queue_length(queue) > 0);
-
+	// Delete current threads TCB from queue
 	queue_iterate(queue, iterator_delete_tcb);
+
 	if (queue_length(queue) == 0) {
 		// Switch context to main thread (since all threads are done)
 		uthread_ctx_t* previous_ctx = current_ctx;
