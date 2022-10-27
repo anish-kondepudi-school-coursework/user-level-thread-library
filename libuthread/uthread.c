@@ -70,20 +70,27 @@ void uthread_exit(void) {
 }
 
 int uthread_create(uthread_func_t func, void* arg) {
-	printf("Creating new thread\n");
+	// Create TCB
 	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	if (tcb == NULL) {
+		return -1;
+	}
+
+	// Allocate stack for TCB
 	tcb->stack = uthread_ctx_alloc_stack();
 	if (tcb->stack == NULL) {
-		printf("Error unable to allocate space for stack\n");
 		return -1;
 	}
+
+	// Initialize TCB
 	uthread_ctx_init(&tcb->ctx, tcb->stack, func, arg);
 
+	// Enqueue TCB
 	if (queue_enqueue(queue, tcb) == -1) {
-		printf("Error enqueueing\n");
 		return -1;
 	}
 
+	// Switch context to execute newly created thread
 	uthread_ctx_t* previous_ctx = current_ctx;
 	current_ctx = &tcb->ctx;
 	uthread_ctx_switch(previous_ctx, current_ctx);
