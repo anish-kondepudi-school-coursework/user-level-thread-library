@@ -78,6 +78,7 @@ void uthread_yield(void) {
 
 void uthread_exit(void) {
 	// Delete current threads TCB from queue
+	uthread_ctx_t current_copy_ref = *current_ctx;
 	queue_iterate(queue, iterator_delete_tcb);
 
 	// If more threads in queue, yield to next queue
@@ -87,7 +88,7 @@ void uthread_exit(void) {
 	}
 
 	// Switch context to main thread (since all threads are done)
-	switch_context(current_ctx, main_ctx);
+	switch_context(&current_copy_ref, main_ctx);
 }
 
 int uthread_create(uthread_func_t func, void* arg) {
@@ -96,9 +97,6 @@ int uthread_create(uthread_func_t func, void* arg) {
 	if (tcb == NULL) {
 		return -1;
 	}
-
-	// Switch context to execute newly created thread
-	switch_context(current_ctx, &tcb->ctx);
 
 	return 0;
 }
@@ -124,7 +122,6 @@ int uthread_start(uthread_func_t func, void* arg) {
 	if (tcb == NULL) {
 		return -1;
 	}
-
 	// Switch context to execute newly created thread
 	switch_context(main_ctx, &tcb->ctx);
 
