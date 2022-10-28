@@ -10,9 +10,9 @@
 #include "uthread.h"
 #include "queue.h"
 
-uthread_ctx_t* main_ctx;
-uthread_ctx_t* current_ctx;
-queue_t queue;
+uthread_ctx_t* g_main_ctx;
+uthread_ctx_t* g_current_ctx;
+queue_t g_queue;
 
 typedef struct uthread_tcb* uthread_tcb_t;
 
@@ -23,7 +23,7 @@ struct uthread_tcb {
 
 static void iterator_delete_tcb(queue_t queue, void* data) {
 	uthread_tcb_t tcb = (uthread_tcb_t) data;
-	if (&tcb->ctx == current_ctx) {
+	if (&tcb->ctx == g_current_ctx) {
 		assert(queue_delete(queue, data) == 0);
 		uthread_ctx_destroy_stack(tcb->stack);
 		free(tcb);
@@ -52,7 +52,7 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 	}
 
 	// Enqueue TCB
-	if (queue_enqueue(queue, tcb) == -1) {
+	if (queue_enqueue(g_queue, tcb) == -1) {
 		uthread_ctx_destroy_stack(tcb->stack);
 		free(tcb);
 		return NULL;
@@ -62,33 +62,33 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 }
 
 void switch_context(uthread_ctx_t* previous_ctx, uthread_ctx_t* new_ctx) {
-	current_ctx = new_ctx;
+	g_current_ctx = new_ctx;
 	uthread_ctx_switch(previous_ctx, new_ctx);
 }
 
 void uthread_yield(void) {
 	// Find next TCB to switch to and move it to back of queue
 	uthread_tcb_t tcb;
-	assert(queue_dequeue(queue, (void**) &tcb) == 0);
-	assert(queue_enqueue(queue, (void*) tcb) == 0);
+	assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
+	assert(queue_enqueue(g_queue, (void*) tcb) == 0);
 
 	// Switch context to execute next thread
-	switch_context(current_ctx, &tcb->ctx);
+	switch_context(g_current_ctx, &tcb->ctx);
 }
 
 void uthread_exit(void) {
 	// Delete current threads TCB from queue
-	uthread_ctx_t current_copy_ref = *current_ctx;
-	queue_iterate(queue, iterator_delete_tcb);
+	uthread_ctx_t current_copy_ref = *g_current_ctx;
+	queue_iterate(g_queue, iterator_delete_tcb);
 
 	// If more threads in queue, yield to next queue
-	if (queue_length(queue) > 0) {
+	if (queue_length(g_queue) > 0) {
 		uthread_yield();
 		return;
 	}
 
 	// Switch context to main thread (since all threads are done)
-	switch_context(&current_copy_ref, main_ctx);
+	switch_context(&current_copy_ref, g_main_ctx);
 }
 
 int uthread_create(uthread_func_t func, void* arg) {
@@ -104,15 +104,15 @@ int uthread_create(uthread_func_t func, void* arg) {
 int uthread_start(uthread_func_t func, void* arg) {
 	// Initialize global data members if needed
 	bool global_data_members_uninitialized =
-		queue == NULL &&
-		main_ctx == NULL &&
-		current_ctx == NULL;
+		g_queue == NULL &&
+		g_main_ctx == NULL &&
+		g_current_ctx == NULL;
 	if (global_data_members_uninitialized) {
-		queue = queue_create();
-		main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
-		current_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
+		g_queue = queue_create();
+		g_main_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
+		g_current_ctx = (uthread_ctx_t*) malloc(sizeof(uthread_ctx_t));
 
-		if (queue == NULL || main_ctx == NULL || current_ctx == NULL) {
+		if (g_queue == NULL || g_main_ctx == NULL || g_current_ctx == NULL) {
 			return -1;
 		}
 	}
@@ -123,7 +123,7 @@ int uthread_start(uthread_func_t func, void* arg) {
 		return -1;
 	}
 	// Switch context to execute newly created thread
-	switch_context(main_ctx, &tcb->ctx);
+	switch_context(g_main_ctx, &tcb->ctx);
 
 	return 0;
 }
