@@ -4,6 +4,8 @@
 
 #include "queue.h"
 
+typedef struct node* node_t;
+
 struct node {
 	void* data;
 	node_t next;
@@ -39,7 +41,7 @@ queue_t queue_create(void) {
 }
 
 int queue_destroy(queue_t queue) {
-	if (queue == NULL || queue->front != NULL) {
+	if (queue == NULL || queue->length != 0) {
 		return -1;
 	}
 
@@ -70,7 +72,7 @@ int queue_enqueue(queue_t queue, void* data) {
 }
 
 int queue_dequeue(queue_t queue, void** data) {
-	if (queue == NULL || data == NULL || queue->front == NULL) {
+	if (queue == NULL || data == NULL || queue->length == 0) {
 		return -1;
 	}
 
@@ -84,11 +86,12 @@ int queue_dequeue(queue_t queue, void** data) {
 	queue->length--;
 	*data = dequeued_node->data;
 	free(dequeued_node);
+
 	return 0;
 }
 
 int queue_delete(queue_t queue, void* data) {
-	if (queue == NULL || data == NULL || queue->front == NULL) {
+	if (queue == NULL || data == NULL || queue->length == 0) {
 		return -1;
 	}
 
@@ -98,6 +101,11 @@ int queue_delete(queue_t queue, void* data) {
 		queue->front = queue->front->next;
 		free(temp);
 		queue->length--;
+
+		// Handle case where front item is only item in linked list
+		if (queue->front == NULL) {
+			queue->back = NULL;
+		}
 		return 0;
 	}
 
@@ -120,6 +128,11 @@ int queue_delete(queue_t queue, void* data) {
 	free(temp);
 	queue->length--;
 
+	// Handle case where last node in linked list is removed
+	if (prev_node->next == NULL) {
+		queue->back = prev_node;
+	}
+
 	return 0;
 }
 
@@ -137,5 +150,5 @@ int queue_iterate(queue_t queue, queue_func_t func) {
 }
 
 int queue_length(queue_t queue) {
-	return (queue == NULL) ? -1 : queue->length;
+	return (queue == NULL) ? -1 : (int) queue->length;
 }
