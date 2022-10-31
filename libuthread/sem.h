@@ -13,7 +13,7 @@
  * resource, the count is decreased. When the resource is not available,
  * following threads are blocked until the resource becomes available again.
  */
-typedef struct semaphore *sem_t;
+typedef struct semaphore* sem_t;
 
 /*
  * sem_create - Create semaphore

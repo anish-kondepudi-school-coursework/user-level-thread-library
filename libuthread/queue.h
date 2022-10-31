@@ -59,6 +59,19 @@ int queue_enqueue(queue_t queue, void *data);
 int queue_dequeue(queue_t queue, void **data);
 
 /*
+ * queue_gethead - Retrieve the head of the queue
+ * @queue: Queue in which to retrieve the head
+ * @data: Address of data pointer where item is received
+ *
+ * Retrieve the oldest item of queue @queue and assign this item (the value of a
+ * pointer) to @data.
+ *
+ * Return: -1 if @queue or @data are NULL, or if the queue is empty. 0 if @data
+ * was set with the oldest item available in @queue.
+ */
+int queue_gethead(queue_t queue, void **data);
+
+/*
  * queue_delete - Delete data item
  * @queue: Queue in which to delete item
  * @data: Data to delete

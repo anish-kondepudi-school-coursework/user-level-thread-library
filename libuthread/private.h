@@ -112,7 +112,7 @@ struct uthread_tcb;
  *
  * Return: Pointer to current thread's TCB
  */
-struct uthread_tcb *uthread_current(void);
+struct uthread_tcb* uthread_current(void);
 
 /*
  * uthread_block - Block currently running thread
