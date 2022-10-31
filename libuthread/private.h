@@ -24,7 +24,7 @@
  * uthread_ctx_init(). Once initialized, it can be switched to with
  * uthread_ctx_switch().
  */
-typedef ucontext_t uthread_ctx_t;
+typedef ucontext_t uthrea d_ctx_t;
 
 /*
  * uthread_ctx_switch - Switch between two execution contexts
@@ -112,7 +112,7 @@ struct uthread_tcb;
  *
  * Return: Pointer to current thread's TCB
  */
-struct uthread_tcb *uthread_current(void);
+;
 
 /*
  * uthread_block - Block currently running thread

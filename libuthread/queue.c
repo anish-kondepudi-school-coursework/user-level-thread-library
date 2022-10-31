@@ -90,6 +90,15 @@ int queue_dequeue(queue_t queue, void** data) {
 	return 0;
 }
 
+int queue_gethead(queue_t queue, void** data) {
+	if (queue == NULL || data == NULL || queue->length == 0) {
+		return -1;
+	}
+
+	*data = queue->front->data;
+	return 0;
+}
+
 int queue_delete(queue_t queue, void* data) {
 	if (queue == NULL || data == NULL || queue->length == 0) {
 		return -1;

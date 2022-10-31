@@ -21,6 +21,10 @@ struct uthread_tcb {
 	void* stack;
 };
 
+struct uthread_tcb* uthread_current(void) {
+	return g_current_ctx;
+}
+
 static void iterator_delete_tcb(queue_t queue, void* data) {
 	uthread_tcb_t tcb = (uthread_tcb_t) data;
 	if (&tcb->ctx == g_current_ctx) {
@@ -141,4 +145,3 @@ void uthread_block(void) {
 void uthread_unblock(struct uthread_tcb* uthread) {
 	/* TODO Phase 4 */
 }
-
