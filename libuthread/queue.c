@@ -137,10 +137,13 @@ int queue_delete(queue_t queue, void* data) {
 }
 
 int queue_iterate(queue_t queue, queue_func_t func) {
+	if (queue == NULL || func == NULL) {
+		return -1;
+	}
+
 	node_t curr_node = queue->front;
 
 	while (curr_node != NULL) {
-
 		node_t next_node = curr_node->next;
 		(*func)(queue, curr_node->data);
 		curr_node = next_node;
