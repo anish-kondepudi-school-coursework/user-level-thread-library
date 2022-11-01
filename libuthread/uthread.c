@@ -10,6 +10,7 @@
 #include "uthread.h"
 #include "queue.h"
 
+long long g_next_tid;
 uthread_ctx_t* g_main_ctx;
 uthread_ctx_t* g_current_ctx;
 queue_t g_queue;
@@ -18,6 +19,7 @@ typedef struct uthread_tcb* uthread_tcb_t;
 
 struct uthread_tcb {
 	uthread_ctx_t ctx;
+	long long tid;
 	void* stack;
 };
 
@@ -58,6 +60,7 @@ uthread_tcb_t create_tcb(uthread_func_t func, void* arg) {
 		return NULL;
 	}
 
+	tcb->tid = g_next_tid++;
 	return tcb;
 }
 
