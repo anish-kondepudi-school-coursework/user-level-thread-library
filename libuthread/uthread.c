@@ -92,10 +92,18 @@ void switch_context(uthread_tcb_t previous_tcb, uthread_tcb_t new_tcb) {
 }
 
 void uthread_yield(void) {
-	// Find next TCB to switch to and move it to back of queue
+	// If only idle queue left, switch to it
 	uthread_tcb_t tcb;
-	assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
-	assert(queue_enqueue(g_queue, (void*) tcb) == 0);
+	if (queue_length(g_queue) == 1) {
+		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
+		switch_context(g_current_tcb, tcb);
+	}
+
+	// If more threads than just idle, find next ready TCB to switch to
+	do {
+		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
+		assert(queue_enqueue(g_queue, (void*) tcb) == 0);
+	} while (tcb->state != Ready);
 
 	// Switch context to execute next thread
 	switch_context(g_current_tcb, tcb);
@@ -163,10 +171,7 @@ int uthread_run(bool preempt, uthread_func_t func, void* arg) {
 }
 
 void uthread_block(void) {
-	/* TODO Phase 4 */
 }
 
 void uthread_unblock(struct uthread_tcb* uthread) {
-	/* TODO Phase 4 */
 }
-
