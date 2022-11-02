@@ -72,6 +72,19 @@ int sem_down(sem_t sem) {
 }
 
 int sem_up(sem_t sem) {
+	if (sem == NULL) {
+		return -1;
+	}
 
+	/* spinlock_lock(&sem->lock); */
+	sem->count++;
+	if (queue_length(sem->queue) > 0) {
+		struct uthread_tcb* tcb;
+		assert(queue_dequeue(sem->queue, (void**) &tcb) != -1);
+		uthread_unblock(tcb);
+	}
+
+	/* spinlock_unlock(&sem->lock); */
+	return 0;
 }
 
