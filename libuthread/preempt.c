@@ -15,23 +15,19 @@
  */
 #define HZ 100
 
-void preempt_disable(void)
-{
+void preempt_disable(void) {
 	/* TODO Phase 4 */
 }
 
-void preempt_enable(void)
-{
+void preempt_enable(void) {
 	/* TODO Phase 4 */
 }
 
-void preempt_start(bool preempt)
-{
+void preempt_start(bool preempt) {
 	/* TODO Phase 4 */
 }
 
-void preempt_stop(void)
-{
+void preempt_stop(void) {
 	/* TODO Phase 4 */
 }
 
