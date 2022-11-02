@@ -174,4 +174,5 @@ void uthread_block(void) {
 }
 
 void uthread_unblock(struct uthread_tcb* uthread) {
+	uthread->state = Ready;
 }
