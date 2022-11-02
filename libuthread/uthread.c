@@ -37,6 +37,10 @@ static void iterator_delete_tcb(queue_t queue, void* data) {
 	}
 }
 
+struct uthread_tcb* uthread_current(void) {
+	return g_current_tcb;
+}
+
 uthread_tcb_t create_and_enqueue_tcb(uthread_func_t func, void* arg) {
 	// Create TCB
 	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
