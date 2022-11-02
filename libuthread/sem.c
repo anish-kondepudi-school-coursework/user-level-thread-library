@@ -12,12 +12,22 @@ struct semaphore {
 
 sem_t sem_create(size_t count)
 {
-	/* TODO Phase 3 */
+	sem_t sem = (sem_t) malloc(sizeof(struct semaphore));
+	if (sem == NULL) {
+		return NULL;
+	}
+
+	sem->queue = queue_create();
+	if (sem->queue == NULL) {
+		return NULL;
+	}
+
+	return sem;
 }
 
 int sem_destroy(sem_t sem)
 {
-	/* TODO Phase 3 */
+
 }
 
 int sem_down(sem_t sem)
