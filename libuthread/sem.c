@@ -6,7 +6,8 @@
 #include "private.h"
 
 struct semaphore {
-	/* TODO Phase 3 */
+	queue_t queue;
+	int count;
 };
 
 sem_t sem_create(size_t count)
