@@ -19,8 +19,8 @@
 #define MILLI_TO_MICRO_CONVERSION_CONSTANT 1000
 
 struct sigaction sa;
-bool preempt_active; // false
-bool preempt_paused; // false
+bool preempt_active = false;
+bool signals_paused = false;
 
 int set_alarm_timer(void) {
 	struct itimerval value;
@@ -35,21 +35,26 @@ int set_alarm_timer(void) {
 }
 
 void alarm_handler(int signum) {
+	if (!preempt_active || signals_paused) {
+		return;
+	}
 	printf("\nBeep, beep, beep, we in the alarmmmmm!\n");
 	set_alarm_timer();
 }
 
 void preempt_disable(void) {
-	preempt_active = preempt;
-	if (!preempt_active) {
+	if (!preempt_active || signals_paused) {
 		return;
 	}
+	signals_paused = true;
 }
 
 void preempt_enable(void) {
-	if (!preempt_active) {
+	if (!preempt_active || !signals_paused) {
 		return;
 	}
+	signals_paused = false;
+	set_alarm_timer();
 }
 
 void preempt_start(bool preempt) {
@@ -58,6 +63,7 @@ void preempt_start(bool preempt) {
 		return;
 	}
 
+	signals_paused = false;
 	sa.sa_handler = alarm_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -69,5 +75,7 @@ void preempt_stop(void) {
 	if (!preempt_active) {
 		return;
 	}
+
+	preempt_active = false;
 }
 
