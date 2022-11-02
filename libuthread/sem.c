@@ -7,7 +7,7 @@
 
 struct semaphore {
 	queue_t queue;
-	int count;
+	size_t count;
 };
 
 sem_t sem_create(size_t count)
@@ -22,6 +22,7 @@ sem_t sem_create(size_t count)
 		return NULL;
 	}
 
+	sem->count = count;
 	return sem;
 }
 
