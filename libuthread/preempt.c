@@ -29,7 +29,7 @@ int set_alarm_timer(void) {
 	value.it_value.tv_sec = 0;
     value.it_value.tv_usec = HZ * MILLI_TO_MICRO_CONVERSION_CONSTANT;
 
-	setitimer(ITIMER_REAL, &value, NULL);
+	setitimer(ITIMER_VIRTUAL, &value, NULL);
 }
 
 void alarm_handler(int signum) {
@@ -45,7 +45,7 @@ void preempt_enable(void) {
 	sa.sa_handler = alarm_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	sigaction(SIGALRM, &sa, NULL);
+	sigaction(SIGVTALRM, &sa, NULL);
 	set_alarm_timer();
 }
 
