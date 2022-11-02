@@ -30,7 +30,7 @@ int set_alarm_timer(void) {
 
 	value.it_value.tv_sec = 0;
     value.it_value.tv_usec = HZ * MILLI_TO_MICRO_CONVERSION_CONSTANT;
-
+	uthread_yield();
 	setitimer(ITIMER_VIRTUAL, &value, NULL);
 }
 
@@ -38,7 +38,7 @@ void alarm_handler(int signum) {
 	if (!preempt_active || signals_paused) {
 		return;
 	}
-	printf("\nBeep, beep, beep, we in the alarmmmmm!\n");
+	uthread_yield();
 	set_alarm_timer();
 }
 
