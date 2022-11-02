@@ -171,6 +171,8 @@ int uthread_run(bool preempt, uthread_func_t func, void* arg) {
 }
 
 void uthread_block(void) {
+	g_current_tcb->state = Blocked;
+	uthread_yield();
 }
 
 void uthread_unblock(struct uthread_tcb* uthread) {
