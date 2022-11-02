@@ -8,7 +8,18 @@
 struct semaphore {
 	queue_t queue;
 	size_t count;
+	int lock;
 };
+
+void spinlock_lock(int *lock)
+{
+	while (test_and_set(lock) == 1);
+}
+
+void spinlock_unlock(int *lock)
+{
+	*lock = 0;
+}
 
 sem_t sem_create(size_t count)
 {
@@ -23,6 +34,7 @@ sem_t sem_create(size_t count)
 	}
 
 	sem->count = count;
+	sem->lock = 0;
 	return sem;
 }
 
@@ -42,7 +54,7 @@ int sem_destroy(sem_t sem)
 
 int sem_down(sem_t sem)
 {
-	/* TODO Phase 3 */
+
 }
 
 int sem_up(sem_t sem)
