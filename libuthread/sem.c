@@ -56,13 +56,18 @@ int sem_down(sem_t sem) {
 	}
 
 	/* spinlock_lock(&sem->lock); */
+	preempt_disable();
 	struct uthread_tcb* current_tcb = uthread_current();
 	queue_enqueue(sem->queue, current_tcb);
 	while (sem->count == 0) {
+		preempt_enable();
 		uthread_block();
-	}
+		preempt_disable();
 
+	}
+	preempt_enable();
 	sem->count--;
+	preempt_disable();
 	/* spinlock_unlock(&sem->lock); */
 
 	return 0;
@@ -73,15 +78,15 @@ int sem_up(sem_t sem) {
 		return -1;
 	}
 
-	/* spinlock_lock(&sem->lock); */
+	preempt_disable();
 	sem->count++;
 	if (queue_length(sem->queue) > 0) {
 		struct uthread_tcb* tcb;
 		assert(queue_dequeue(sem->queue, (void**) &tcb) != -1);
 		uthread_unblock(tcb);
 	}
+	preempt_enable();
 
-	/* spinlock_unlock(&sem->lock); */
 	return 0;
 }
 
