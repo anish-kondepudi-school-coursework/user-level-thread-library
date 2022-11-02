@@ -87,11 +87,17 @@ void switch_context(uthread_tcb_t previous_tcb, uthread_tcb_t new_tcb) {
 	// Update global current TCB
 	g_current_tcb = new_tcb;
 
+	// Enable preemption (Should wait till context actually switches)
+	preempt_enable();
+
 	// Switch context
 	uthread_ctx_switch(&previous_tcb->ctx, &new_tcb->ctx);
 }
 
 void uthread_yield(void) {
+	// Disable preemption
+	preempt_disable();
+
 	// If only idle queue left, switch to it
 	uthread_tcb_t tcb;
 	if (queue_length(g_queue) == 1) {
@@ -127,6 +133,9 @@ int uthread_create(uthread_func_t func, void* arg) {
 }
 
 int uthread_start(uthread_func_t func, void* arg) {
+	// Disable preemption
+	preempt_disable();
+
 	// Initialize global data members if needed
 	if (g_queue == NULL && g_current_tcb == NULL) {
 		g_queue = queue_create();
@@ -155,6 +164,9 @@ int uthread_start(uthread_func_t func, void* arg) {
 	if (queue_enqueue(g_queue, idle_thread_tcb) == -1) {
 		return -1;
 	}
+
+	// Enable preemption
+	preempt_enable();
 
 	// Yield on idle thread until it's only process left in queue
 	while (queue_length(g_queue) > 1) {
