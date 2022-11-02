@@ -15,6 +15,10 @@
  */
 #define HZ 100
 
+void alarm_handler(int signum) {
+	printf("\nBeep, beep, beep, we in the alarmmmmm!\n");
+}
+
 void preempt_disable(void) {
 	/* TODO Phase 4 */
 }
