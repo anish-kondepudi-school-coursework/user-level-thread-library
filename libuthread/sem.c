@@ -54,7 +54,19 @@ int sem_destroy(sem_t sem)
 
 int sem_down(sem_t sem)
 {
+	if (sem == NULL) {
+		return -1;
+	}
 
+	spinlock_lock(sem->lock);
+	while (sem->count == 0) {
+		uthread_block();
+	}
+
+	sem->count--;
+	spinlock_unlock(sem->lock);
+
+	return 0;
 }
 
 int sem_up(sem_t sem)
