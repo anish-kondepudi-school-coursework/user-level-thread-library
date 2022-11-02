@@ -3,8 +3,11 @@ lib := libuthread.a
 
 all: $(lib)
 
-$(lib): queue.o uthread.o preempt.o context.o
+$(lib): queue.o uthread.o sem.o preempt.o context.o
 	ar rcs $@ $^
+
+sem.o: sem.c sem.h uthread.h private.h queue.h
+	gcc -Werror -Wextra -c $<
 
 uthread.o: uthread.c uthread.h private.h queue.h
 	gcc -Werror -Wextra -c $<
