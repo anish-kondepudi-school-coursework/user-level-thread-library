@@ -165,9 +165,10 @@ int uthread_start(uthread_func_t func, void* arg) {
 }
 
 int uthread_run(bool preempt, uthread_func_t func, void* arg) {
-	// Making uthread_run a wrapper around uthread_star for now
-	// since I'm not sure how "preempt is going to be used in phase 3
-	return uthread_start(func, arg);
+	preempt_start(preempt);
+	int retval = uthread_start(func, arg);
+	preempt_stop();
+	return retval;
 }
 
 void uthread_block(void) {
