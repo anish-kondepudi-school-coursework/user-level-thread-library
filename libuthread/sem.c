@@ -12,15 +12,6 @@ struct semaphore {
 	volatile int lock;
 };
 
-void spinlock_lock(volatile int* lock) {
-	while (__sync_lock_test_and_set(lock, 1)) {}
-}
-
-void spinlock_unlock(volatile int* lock) {
-	__sync_synchronize();
-	*lock = 0;
-}
-
 sem_t sem_create(size_t count) {
 	sem_t sem = (sem_t) malloc(sizeof(struct semaphore));
 	if (sem == NULL) {
@@ -55,7 +46,6 @@ int sem_down(sem_t sem) {
 		return -1;
 	}
 
-	/* spinlock_lock(&sem->lock); */
 	preempt_disable();
 	struct uthread_tcb* current_tcb = uthread_current();
 	queue_enqueue(sem->queue, current_tcb);
@@ -68,7 +58,6 @@ int sem_down(sem_t sem) {
 	preempt_enable();
 	sem->count--;
 	preempt_disable();
-	/* spinlock_unlock(&sem->lock); */
 
 	return 0;
 }
