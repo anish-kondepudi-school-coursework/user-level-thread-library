@@ -13,15 +13,12 @@ struct semaphore {
 };
 
 void spinlock_lock(volatile int* lock) {
-	while (__sync_lock_test_and_set(lock, 1)) {
-        // Do nothing. This GCC builtin instruction
-        // ensures memory barrier.
-    }
+	while (__sync_lock_test_and_set(lock, 1)) {}
 }
 
 void spinlock_unlock(volatile int* lock) {
-	__sync_synchronize(); // Memory barrier.
-    *lock = 0;
+	__sync_synchronize();
+	*lock = 0;
 }
 
 sem_t sem_create(size_t count) {
