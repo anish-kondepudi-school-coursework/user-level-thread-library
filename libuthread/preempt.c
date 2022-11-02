@@ -19,6 +19,8 @@
 #define MILLI_TO_MICRO_CONVERSION_CONSTANT 1000
 
 struct sigaction sa;
+bool preempt_active; // false
+bool preempt_paused; // false
 
 int set_alarm_timer(void) {
 	struct itimerval value;
@@ -38,10 +40,24 @@ void alarm_handler(int signum) {
 }
 
 void preempt_disable(void) {
-	/* TODO Phase 4 */
+	preempt_active = preempt;
+	if (!preempt_active) {
+		return;
+	}
 }
 
 void preempt_enable(void) {
+	if (!preempt_active) {
+		return;
+	}
+}
+
+void preempt_start(bool preempt) {
+	preempt_active = preempt;
+	if (!preempt_active) {
+		return;
+	}
+
 	sa.sa_handler = alarm_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -49,11 +65,9 @@ void preempt_enable(void) {
 	set_alarm_timer();
 }
 
-void preempt_start(bool preempt) {
-	/* TODO Phase 4 */
-}
-
 void preempt_stop(void) {
-	/* TODO Phase 4 */
+	if (!preempt_active) {
+		return;
+	}
 }
 
