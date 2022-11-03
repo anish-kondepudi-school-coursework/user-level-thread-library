@@ -9,7 +9,6 @@
 struct semaphore {
 	queue_t queue;
 	size_t count;
-	volatile int lock;
 };
 
 sem_t sem_create(size_t count) {
@@ -24,7 +23,6 @@ sem_t sem_create(size_t count) {
 	}
 
 	sem->count = count;
-	sem->lock = 0;
 	return sem;
 }
 
