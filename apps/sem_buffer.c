@@ -27,9 +27,8 @@ struct test4 {
 
 #define clamp(x, y) (((x) <= (y)) ? (x) : (y))
 
-static void consumer(void* arg)
-{
-	struct test4 *t = (struct test4*)arg;
+static void consumer(void* arg) {
+	struct test4* t = (struct test4*) arg;
 	size_t out = 0;
 
 	while (out < t->maxcount - 1) {
@@ -50,9 +49,8 @@ static void consumer(void* arg)
 	}
 }
 
-static void producer(void* arg)
-{
-	struct test4 *t = (struct test4*)arg;
+static void producer(void* arg) {
+	struct test4* t = (struct test4*) arg;
 	size_t count = 0;
 
 	uthread_create(consumer, arg);
@@ -75,8 +73,7 @@ static void producer(void* arg)
 	}
 }
 
-static unsigned int get_argv(char *argv)
-{
+static unsigned int get_argv(char* argv) {
 	long int ret = strtol(argv, NULL, 0);
 	if (ret == LONG_MIN || ret == LONG_MAX) {
 		perror("strtol");
@@ -85,8 +82,7 @@ static unsigned int get_argv(char *argv)
 	return ret;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
 	struct test4 t;
 	unsigned int maxcount = MAXCOUNT;
 
