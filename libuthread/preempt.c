@@ -30,7 +30,7 @@ int set_alarm_timer(void) {
 
 	value.it_value.tv_sec = 0;
     value.it_value.tv_usec = HZ * MILLI_TO_MICRO_CONVERSION_CONSTANT;
-	uthread_yield();
+
 	setitimer(ITIMER_VIRTUAL, &value, NULL);
 }
 
