@@ -98,6 +98,7 @@ void uthread_yield(void) {
 	// Disable preemption
 	preempt_disable();
 
+	// Get length of queue
 	int queue_len = queue_length(g_queue);
 	assert(queue_len != -1);
 
@@ -109,22 +110,11 @@ void uthread_yield(void) {
 
 	// If only the idle thread is left in queue, switch to it
 	uthread_tcb_t tcb;
-	if (queue_len == 1) {
-		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
-		switch_context(g_current_tcb, tcb);
-	}
-
-	// If there are no new threads to run, continue running same thread
-	if (queue_len == 2 && g_current_tcb->state != Idle) {
-		preempt_enable();
-		return;
-	}
-
-	// If there are more threads than just the idle thread, find next ready TCB to switch to
 	do {
 		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
 		assert(queue_enqueue(g_queue, (void*) tcb) == 0);
-	} while (tcb->state != Ready);
+		assert(tcb->state != Running);
+	} while (tcb->state == Blocked);
 
 	// Switch context to execute next ready thread
 	switch_context(g_current_tcb, tcb);
