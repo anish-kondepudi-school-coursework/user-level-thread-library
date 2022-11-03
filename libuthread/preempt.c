@@ -62,12 +62,15 @@ void preempt_start(bool preempt) {
 	if (!preempt_active) {
 		return;
 	}
-
 	signals_paused = false;
+
+	// Set up signal handler for preemption
 	sa.sa_handler = alarm_handler;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGVTALRM, &sa, NULL);
+
+	// Start timer to send SIGVTALRM signal
 	set_alarm_timer();
 }
 
@@ -75,7 +78,6 @@ void preempt_stop(void) {
 	if (!preempt_active) {
 		return;
 	}
-
 	preempt_active = false;
 }
 
