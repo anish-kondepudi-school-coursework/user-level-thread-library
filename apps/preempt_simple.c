@@ -21,28 +21,25 @@
 
 volatile bool g_thread2_executed;
 
-void thread2(void *arg)
-{
-	(void)arg;
+void thread2(void* arg) {
+    (void) arg;
 
     printf("thread2\n");
     g_thread2_executed = true;
 }
 
-void thread1(void *arg)
-{
-	(void)arg;
+void thread1(void* arg) {
+    (void) arg;
 
     uthread_create(thread2, NULL);
-    while(!g_thread2_executed) {
+    while (!g_thread2_executed) {
         // Halt till thread2 is preempted and completes
     }
     printf("thread1\n");
 }
 
-int main(void)
-{
+int main(void) {
     g_thread2_executed = false;
-	assert(uthread_run(true, thread1, NULL) == 0);
-	return 0;
+    assert(uthread_run(true, thread1, NULL) == 0);
+    return 0;
 }
