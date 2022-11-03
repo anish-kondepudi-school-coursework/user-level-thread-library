@@ -26,10 +26,10 @@ int set_alarm_timer(void) {
 	struct itimerval value;
 
 	value.it_interval.tv_sec = 0;
-    value.it_interval.tv_usec = 0;
+	value.it_interval.tv_usec = 0;
 
 	value.it_value.tv_sec = 0;
-    value.it_value.tv_usec = HZ * MILLI_TO_MICRO_CONVERSION_CONSTANT;
+	value.it_value.tv_usec = HZ * MILLI_TO_MICRO_CONVERSION_CONSTANT;
 
 	setitimer(ITIMER_VIRTUAL, &value, NULL);
 }
