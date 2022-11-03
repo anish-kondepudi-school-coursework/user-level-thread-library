@@ -17,19 +17,17 @@ enum State {
 	Running
 };
 
-typedef struct uthread_tcb* uthread_tcb_t;
-
 struct uthread_tcb {
 	uthread_ctx_t ctx;
 	enum State state;
 	void* stack;
 };
 
-uthread_tcb_t g_current_tcb;
+struct uthread_tcb* g_current_tcb;
 queue_t g_queue;
 
 static void iterator_delete_tcb(queue_t queue, void* data) {
-	uthread_tcb_t tcb = (uthread_tcb_t) data;
+	struct uthread_tcb* tcb = (struct uthread_tcb*) data;
 	if (&tcb->ctx == &g_current_tcb->ctx) {
 		assert(queue_delete(queue, data) == 0);
 		uthread_ctx_destroy_stack(tcb->stack);
@@ -41,9 +39,9 @@ struct uthread_tcb* uthread_current(void) {
 	return g_current_tcb;
 }
 
-uthread_tcb_t create_and_enqueue_tcb(uthread_func_t func, void* arg) {
+struct uthread_tcb* create_and_enqueue_tcb(uthread_func_t func, void* arg) {
 	// Create TCB
-	uthread_tcb_t tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	struct uthread_tcb* tcb = (struct uthread_tcb*) malloc(sizeof(struct uthread_tcb));
 	if (tcb == NULL) {
 		return NULL;
 	}
@@ -74,7 +72,7 @@ uthread_tcb_t create_and_enqueue_tcb(uthread_func_t func, void* arg) {
 	return tcb;
 }
 
-void switch_context(uthread_tcb_t previous_tcb, uthread_tcb_t new_tcb) {
+void switch_context(struct uthread_tcb* previous_tcb, struct uthread_tcb* new_tcb) {
 	// Update states for TCBs
 	if (previous_tcb->state == Running) {
 		previous_tcb->state = Ready;
@@ -109,7 +107,7 @@ void uthread_yield(void) {
 	}
 
 	// If only the idle thread is left in queue, switch to it
-	uthread_tcb_t tcb;
+	struct uthread_tcb* tcb;
 	do {
 		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
 		assert(queue_enqueue(g_queue, (void*) tcb) == 0);
@@ -135,7 +133,7 @@ int uthread_create(uthread_func_t func, void* arg) {
 	preempt_disable();
 
 	// Create TCB
-	uthread_tcb_t tcb = create_and_enqueue_tcb(func, arg);
+	struct uthread_tcb* tcb = create_and_enqueue_tcb(func, arg);
 	if (tcb == NULL) {
 		preempt_enable();
 		return -1;
@@ -149,13 +147,13 @@ int uthread_start(uthread_func_t func, void* arg) {
 	preempt_disable();
 
 	// Create and Enqueue next TCB
-	uthread_tcb_t tcb = create_and_enqueue_tcb(func, arg);
+	struct uthread_tcb* tcb = create_and_enqueue_tcb(func, arg);
 	if (tcb == NULL) {
 		return -1;
 	}
 
 	// Create TCB for idle thread
-	uthread_tcb_t idle_thread_tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+	struct uthread_tcb* idle_thread_tcb = (struct uthread_tcb*) malloc(sizeof(struct uthread_tcb));
 	if (idle_thread_tcb == NULL) {
 		return -1;
 	}
@@ -179,7 +177,7 @@ int uthread_run(bool preempt, uthread_func_t func, void* arg) {
 	// Initialize global data members if needed
 	if (g_queue == NULL && g_current_tcb == NULL) {
 		g_queue = queue_create();
-		g_current_tcb = (uthread_tcb_t) malloc(sizeof(struct uthread_tcb));
+		g_current_tcb = (struct uthread_tcb*) malloc(sizeof(struct uthread_tcb));
 
 		if (g_queue == NULL || g_current_tcb == NULL) {
 			return -1;
