@@ -25,18 +25,17 @@ struct channel {
 };
 
 struct filter {
-	struct channel *left;
-	struct channel *right;
+	struct channel* left;
+	struct channel* right;
 	unsigned int prime;
-	struct filter *next;
+	struct filter* next;
 };
 
 static unsigned int max = MAXPRIME;
 
 /* Producer thread: produces all numbers, from 2 to max */
-static void source(void *arg)
-{
-	struct channel *c = (struct channel*) arg;
+static void source(void* arg) {
+	struct channel* c = (struct channel*) arg;
 	size_t i;
 
 	for (i = 2; i <= max; i++) {
@@ -52,9 +51,8 @@ static void source(void *arg)
 }
 
 /* Filter thread */
-static void filter(void *arg)
-{
-	struct filter *f = (struct filter*) arg;
+static void filter(void* arg) {
+	struct filter* f = (struct filter*) arg;
 	int value;
 
 	while (1) {
@@ -77,12 +75,11 @@ static void filter(void *arg)
 }
 
 /* Consumer thread */
-static void sink(void *arg)
-{
-	struct channel *init_p, *p;
+static void sink(void* arg) {
+	struct channel* init_p, * p;
 	int value;
-	struct filter *f_head = NULL;
-	(void)arg;
+	struct filter* f_head = NULL;
+	(void) arg;
 
 	init_p = malloc(sizeof(*init_p));
 
@@ -93,7 +90,7 @@ static void sink(void *arg)
 	uthread_create(source, p);
 
 	while (1) {
-		struct filter *f;
+		struct filter* f;
 
 		sem_down(p->consume);
 		value = p->value;
@@ -127,8 +124,7 @@ static void sink(void *arg)
 	free(p);
 }
 
-static unsigned int get_argv(char *argv)
-{
+static unsigned int get_argv(char* argv) {
 	long int ret = strtol(argv, NULL, 0);
 
 	if (ret == LONG_MIN || ret == LONG_MAX) {
@@ -138,8 +134,7 @@ static unsigned int get_argv(char *argv)
 	return ret;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
 	if (argc > 1)
 		max = get_argv(argv[1]);
 

@@ -10,15 +10,13 @@
 
 #include <uthread.h>
 
-void hello(void *arg)
-{
-	(void)arg;
+void hello(void* arg) {
+	(void) arg;
 
 	printf("Hello world!\n");
 }
 
-int main(void)
-{
+int main(void) {
 	uthread_run(false, hello, NULL);
 
 	return 0;

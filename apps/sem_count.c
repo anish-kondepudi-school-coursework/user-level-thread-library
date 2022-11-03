@@ -22,9 +22,8 @@ struct test3 {
 	size_t maxcount;
 };
 
-static void thread2(void *arg)
-{
-	struct test3 *t = (struct test3*)arg;
+static void thread2(void* arg) {
+	struct test3* t = (struct test3*) arg;
 
 	while (t->x < t->maxcount) {
 		printf("thread 2, x = %zu\n", t->x++);
@@ -33,9 +32,8 @@ static void thread2(void *arg)
 	}
 }
 
-static void thread1(void *arg)
-{
-	struct test3 *t = (struct test3*)arg;
+static void thread1(void* arg) {
+	struct test3* t = (struct test3*) arg;
 
 	uthread_create(thread2, arg);
 
@@ -46,8 +44,7 @@ static void thread1(void *arg)
 	}
 }
 
-static unsigned int get_argv(char *argv)
-{
+static unsigned int get_argv(char* argv) {
 	long int ret = strtol(argv, NULL, 0);
 	if (ret == LONG_MIN || ret == LONG_MAX) {
 		perror("strtol");
@@ -56,8 +53,7 @@ static unsigned int get_argv(char *argv)
 	return ret;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
 	struct test3 t;
 	size_t maxcount = MAXCOUNT;
 
