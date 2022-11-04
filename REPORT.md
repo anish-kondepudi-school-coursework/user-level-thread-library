@@ -95,12 +95,39 @@ Additionally, we maintain 2 global variables that can be accessible from any thr
 - It then dequeues the next available thread from the queue, changes its state to `Running`, and context switches to it
 
 `uthread_exit`
-- This method halts execution of the current thread, deletes it from the queue, and yields to the next avaible thread (`uthread_yield`)
+- This method halts execution of the current thread, deletes it from the queue, and yields to the next available thread (`uthread_yield`)
 
-**Note: All methods in the uthread API disable preemption before running and enable them once complete. This is important since we don't want to be preempted while switching contexts. **
+*Note: All methods in the uthread API disable preemption before running and enable them once complete. This is important since we don't want to be preempted while switching contexts.*
 
 ## Semaphore Implementation
 
+The semaphore API provides a public interface for users to control access to common resources by multiple threads. This was done by initializing the semaphore to a count (usually the number of available resources). If a thread successfully takes that resource, then the count is incremented. When a resource isn't available, the thread is blocked until that resource becomes available again. The internal details for the semaphores definition and the publicly exposed methods are shown below. The semaphore struct hold a data member of type `queue_t` - this is used to hold blocked processes that can later be unblocked once resources free up.
+
+```c
+struct semaphore {
+	queue_t queue;
+	size_t count;
+};
+```
+
+`sem_create`
+- This method allocated memory for a semaphore struct and initializes it's values
+
+`sem_destroy`
+- This method de-allocates the memory for a semaphore thereby destroying it
+
+`sem_down`
+- This method check if resources are available (semaphore's count is greater than 0)
+- If resources are not available
+    - add current thread to the semaphore's queue of blocked threads
+    - block current thread and yield to next available thread (`uthread_block`)
+- Decrement count by one
+
+`sem_up`
+- Increment count by one
+- If any threads are in semaphore's blocked queue, unblock them (`uthread_unblock`)
+
+*Note: All methods in the semaphore API disable preemption before running and enable them once complete. This is important since we don't want to be preempted while in the critical sections of the semaphore logic.*
 
 ## Preemption Implementation
 
