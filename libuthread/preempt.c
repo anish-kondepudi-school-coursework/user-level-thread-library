@@ -22,7 +22,7 @@ struct sigaction sa;
 bool preempt_active = false;
 bool signals_paused = false;
 
-int set_alarm_timer(void) {
+void set_alarm_timer(void) {
 	struct itimerval value;
 
 	value.it_interval.tv_sec = 0;
@@ -35,6 +35,7 @@ int set_alarm_timer(void) {
 }
 
 void alarm_handler(int signum) {
+	(void) signum;
 	if (!preempt_active || signals_paused) {
 		return;
 	}
