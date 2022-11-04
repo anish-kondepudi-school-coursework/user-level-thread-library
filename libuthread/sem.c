@@ -56,7 +56,9 @@ int sem_down(sem_t sem) {
 
 	// Find current thread and add to queue
 	struct uthread_tcb* current_tcb = uthread_current();
-	queue_enqueue(sem->queue, current_tcb);
+	if (sem->count == 0) {
+		queue_enqueue(sem->queue, current_tcb);
+	}
 
 	// If no resources available, allow preemption,
 	// block self, and yield to next free thread
