@@ -143,6 +143,7 @@ struct semaphore {
 
 ## Preemption Implementation
 
+Preemption forcefully switches context between multiple running threads to prevent starvation. Since the current non-preemption implementation only switches between threads on threads calling `uthread_yield`, if a thread never yields, it could starve other processes, thus showing the necessity of preemption.
 
 ## Testing
 
