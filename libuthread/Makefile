@@ -1,25 +1,22 @@
-# Target library
-lib := libuthread.a
+target	:= libuthread.a
+objs	:= queue.o uthread.o sem.o preempt.o context.o
+CC	:= gcc
+AR	:= ar
+RM	:= rm
+CFLAGS	:= -Wall -Werror -Wextra -g
+ARFLAGS	:= rcs
+RMFLAGS	:= -f
 
-all: $(lib)
+all: $(target)
 
-$(lib): queue.o uthread.o sem.o preempt.o context.o
-	ar rcs $@ $^
+deps := $(patsubst %.o,%.d,$(objs))
+	-include $(deps)
 
-sem.o: sem.c sem.h uthread.h private.h queue.h
-	gcc -Werror -Wextra -c $<
+$(target): $(objs)
+	$(AR) $(ARFLAGS) $@ $^
 
-uthread.o: uthread.c uthread.h private.h queue.h
-	gcc -Werror -Wextra -c $<
-
-context.o: context.c private.h
-	gcc -Wall -Werror -Wextra -c $<
-
-preempt.o: preempt.c private.h
-	gcc -Werror -Wextra -c $<
-
-queue.o: queue.c queue.h
-	gcc -Wall -Werror -Wextra -c $<
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(lib) *.o
+	$(RM) $(RMFLAGS) $(target) $(objs) $(deps)

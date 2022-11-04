@@ -18,11 +18,11 @@
 #define HZ 100
 #define MILLI_TO_MICRO_CONVERSION_CONSTANT 1000
 
-struct sigaction sa;
-bool preempt_active = false;
-bool signals_paused = false;
+struct sigaction g_sa;
+volatile bool g_preempt_active = false;
+volatile bool g_signals_paused = false;
 
-int set_alarm_timer(void) {
+void set_alarm_timer(void) {
 	struct itimerval value;
 
 	value.it_interval.tv_sec = 0;
@@ -35,7 +35,8 @@ int set_alarm_timer(void) {
 }
 
 void alarm_handler(int signum) {
-	if (!preempt_active || signals_paused) {
+	(void) signum;
+	if (!g_preempt_active || g_signals_paused) {
 		return;
 	}
 	uthread_yield();
@@ -43,41 +44,41 @@ void alarm_handler(int signum) {
 }
 
 void preempt_disable(void) {
-	if (!preempt_active || signals_paused) {
+	if (!g_preempt_active || g_signals_paused) {
 		return;
 	}
-	signals_paused = true;
+	g_signals_paused = true;
 }
 
 void preempt_enable(void) {
-	if (!preempt_active || !signals_paused) {
+	if (!g_preempt_active || !g_signals_paused) {
 		return;
 	}
-	signals_paused = false;
+	g_signals_paused = false;
 	set_alarm_timer();
 }
 
 void preempt_start(bool preempt) {
-	preempt_active = preempt;
-	if (!preempt_active) {
+	g_preempt_active = preempt;
+	if (!g_preempt_active) {
 		return;
 	}
-	signals_paused = false;
+	g_signals_paused = false;
 
 	// Set up signal handler for preemption
-	sa.sa_handler = alarm_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sigaction(SIGVTALRM, &sa, NULL);
+	g_sa.sa_handler = alarm_handler;
+	sigemptyset(&g_sa.sa_mask);
+	g_sa.sa_flags = 0;
+	sigaction(SIGVTALRM, &g_sa, NULL);
 
 	// Start timer to send SIGVTALRM signal
 	set_alarm_timer();
 }
 
 void preempt_stop(void) {
-	if (!preempt_active) {
+	if (!g_preempt_active) {
 		return;
 	}
-	preempt_active = false;
+	g_preempt_active = false;
 }
 
