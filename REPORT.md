@@ -143,9 +143,35 @@ struct semaphore {
 
 ## Preemption Implementation
 
-Preemption forcefully switches context between multiple running threads to prevent starvation. Since the current non-preemption implementation only switches between threads on threads calling `uthread_yield`, if a thread never yields, it could starve other processes, thus showing the necessity of preemption.
+Preemption forcefully switches context between multiple running threads to prevent starvation. Since the current non-preemption implementation only switches between threads on `uthread_yield` being called, if a thread never yields, it could starve other threads, thus showing the necessity of preemption.
 
-## Testing
+Preemption is implemented by using signals, specifically the `SIGVTALRM` signal which is raised by `setitimer`. When the current process receives `SIGVTALRM`, a alarm handler method runs which yields to allow the next ready thread to run and then sets another timer using `settimer`. To enable preemption a several global variables are used in to easily access regardless of thread:
+
+```c
+struct sigaction sa; // Used for SIGVTALRM handler
+bool preempt_active = false; // Used to disable/enable all preemption
+bool signals_paused = false; // used to temporarily pause/resume preemption
+```
+
+Using these global variables, the preemption API exposes several API endpoints whose functionality are defined below:
+
+`preempt_disable`
+- Pauses preemption (sets `signals_paused` to true) thereby stopping `SIGVTALRM` signals from occurring
+
+`preempt_enable`
+- Resumes preemption (sets `signals_paused` to false) thereby allowing `SIGVTALRM` signals from occurring
+- Additionally, it calls `setitimer` to begin the `SIGVTALRM` signal loop
+
+`preempt_start`
+- Initializes alarm hanlder to handle `SIGVTALRM` signals
+- Calls `setitimer` to begin the `SIGVTALRM` signal loop
+
+`preempt_stop`
+- Disables preemption (sets `preempt_active` to false), thereby disabling `preempt_disable` and `preempt_enable`
+
+## Preemption Testing
+
+`test_preempt.c` validates the functionality of preemption by creating a thread, thread A. There A then creates a new thread, thread B. Thread A then infinitely lock itself in a loop waiting for thread B to finish. In a situation where preemption is not enabled, thread A will infinitely loop since thread B won't be scheduled since thread A never yields. This would thus lead to the starvation of thread B and an infinite execution of thread A. However, with preemption thread B will gain control of the CPU and complete its execution. Then thread A will notice thread B has completed and break out of its loop and end its execution.
 
 ## Memory Management
 
