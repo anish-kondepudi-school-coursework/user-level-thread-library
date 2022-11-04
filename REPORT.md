@@ -82,10 +82,13 @@ struct uthread_tcb {
 
 Additionally, we maintain 2 global variables that can be accessible from any thread. This allows us to easily context switch regardless of the thread we are currently executing. The first global variable we maintain is a queue (`queue_t g_queue`) which stores TCBs of all the threads we are running. This enables us to efficiently schedule threads in a round robin fashion. We also maintain the current running thread (`struct uthread_tcb* g_current_tcb`) which is useful when context switching. With these global variables shared among all threads, the uthread API provides the following public interface to all users:
 
+**Public Endpoints:**
+
 `uthread_run`
 - This method creates an idle thread TCB representing the original execution thread and enqueues it
 - It then creates a new thread TCB for the new thread it needs to run and enqueues it
 - Next, the idle thread continually yields (`uthread_yield`) until it's the only thread remaining in the queue (essentially blocking itself until every other thread has finished)
+- This method is also responsible for enabling preemption if the user requests it
 
 `uthread_create`
 - This method creates a new TCB for the new thread it needs to run and enqueues it
@@ -97,7 +100,16 @@ Additionally, we maintain 2 global variables that can be accessible from any thr
 `uthread_exit`
 - This method halts execution of the current thread, deletes it from the queue, and yields to the next available thread (`uthread_yield`)
 
-*Note: All methods in the uthread API disable preemption before running and enable them once complete. This is important since we don't want to be preempted while switching contexts.*
+**Private Endpoints:**
+
+`uthread_block`
+- Change current thread's state to `Blocked`
+- Yield to next available thread (`uthread_yield`)
+
+`uthread_unblock`
+- Change current thread's state to `Ready`
+
+*Note: All methods in the uthread public API disables preemption before running and enables it once complete. This is important since we don't want to be preempted while switching contexts.*
 
 ## Semaphore Implementation
 
