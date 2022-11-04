@@ -171,7 +171,16 @@ Using these global variables, the preemption API exposes several API endpoints w
 
 ## Preemption Testing
 
-`test_preempt.c` validates the functionality of preemption by creating a thread, thread A. There A then creates a new thread, thread B. Thread A then infinitely lock itself in a loop waiting for thread B to finish. In a situation where preemption is not enabled, thread A will infinitely loop since thread B won't be scheduled since thread A never yields. This would thus lead to the starvation of thread B and an infinite execution of thread A. However, with preemption thread B will gain control of the CPU and complete its execution. Then thread A will notice thread B has completed and break out of its loop and end its execution.
+`test_preempt.c` validates the functionality of preemption by creating a thread, thread A. There A then creates a new thread, thread B. Thread A then infinitely lock itself in a loop waiting for thread B to finish. In a situation where preemption is not enabled, thread A will infinitely loop since thread B won't be scheduled since thread A never yields. This would thus lead to the starvation of thread B and an infinite execution of thread A. However, with preemption thread B will gain control of the CPU and complete its execution. Then thread A will notice thread B has completed and break out of its loop and end its execution. This simple test verifies the functionality of the preemption feature since without preemption the program will result in a process which never terminates.
 
 ## Memory Management
+
+One location where objects are dynamically allocated is in `queue.c` where new `node_t`'s are created upon `queue_enqueue`. However, upon `queue_dequeue` and `queue_delete`, these `node_t`'s are free()'ed and thus should not lead to any memory leaks. Also, the memory allocated for `queue_t` in `queue_create` is free()'ed in `queue_destroy`.
+
+Additionally, in `sem.c`, although `sem_create` malloc()'s memory for the semaphore struct as well as its queue data member. On call to `sem_destroy` that memory is free()'ed and should therefore not lead to any memory leaks.
+
+The same is observed in `uthread.c` where `uthread_tcb_t`'s are dynamically allocated. However, upon `uthread_exit` being called, these `uthread_tcb_t`'s are free()'ed.
+
+It's important to note that in `uthread.c`, the global variables `g_queue` and `g_current_tcb` are dynamically allocated but never free()'ed. This is because upon the program's completion, these objects will automatically be freed). Since they are only ever malloc()'ed once, this memory on the heap is constant and won't lead to a build up in heap space (memory leaks).
+
 
