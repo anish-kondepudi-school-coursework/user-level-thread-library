@@ -111,7 +111,6 @@ void uthread_yield(void) {
 	do {
 		assert(queue_dequeue(g_queue, (void**) &tcb) == 0);
 		assert(queue_enqueue(g_queue, (void*) tcb) == 0);
-		assert(tcb->state != Running);
 	} while (tcb->state == Blocked);
 
 	// Switch context to execute next ready thread
@@ -123,7 +122,6 @@ void uthread_exit(void) {
 	preempt_disable();
 
 	// Delete current threads TCB from queue
-	assert(queue_length(g_queue) >= 2);
 	queue_iterate(g_queue, iterator_delete_tcb);
 	uthread_yield();
 }
