@@ -54,8 +54,10 @@ int sem_down(sem_t sem) {
 	// Disable preemption before critical section
 	preempt_disable();
 
-	// Find current thread and add to queue
+	// Find current thread
 	struct uthread_tcb* current_tcb = uthread_current();
+
+	// If current thread needs to block, add to queue
 	if (sem->count == 0) {
 		queue_enqueue(sem->queue, current_tcb);
 	}
